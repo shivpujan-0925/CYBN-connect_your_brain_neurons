@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All problems — CYBN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./dashboard.html" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+      </a>
+      <div class="flex items-center gap-5"><a href="./stats.html" class="nav-link">Stats</a><a href="./dashboard.html" class="nav-link">← Back to dashboard</a></div>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-4xl w-full mx-auto px-6 py-10">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+      <h1 class="font-display text-2xl font-semibold">Total problem revision list</h1>
+      <a href="./add-problem.html" class="btn-primary">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Add problem
+      </a>
+    </div>
+
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-1" id="filter-tabs">
+      <button class="btn-secondary !bg-spark !text-ink-950 !border-spark" data-filter="">All</button>
+      <button class="btn-secondary" data-filter="due">Due today</button>
+      <button class="btn-secondary" data-filter="overdue">Overdue</button>
+      <button class="btn-secondary" data-filter="active">Active</button>
+      <button class="btn-secondary" data-filter="mastered">Mastered</button>
+    </div>
+
+    <div id="list-container" class="card divide-y divide-ink-600/60">
+      <p class="text-paper-dim text-sm p-6">Loading…</p>
+    </div>
+  </main>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script>
+    (async function init() {
+      const user = await requireSession();
+      if (!user) return;
+
+      const container = document.getElementById('list-container');
+      const tabs = document.querySelectorAll('#filter-tabs button');
+
+      function setActiveTab(filter) {
+        tabs.forEach((t) => {
+          const isActive = t.dataset.filter === filter;
+          t.classList.toggle('!bg-spark', isActive);
+          t.classList.toggle('!text-ink-950', isActive);
+          t.classList.toggle('!border-spark', isActive);
+        });
+      }
+
+      async function loadList(filter) {
+        container.innerHTML = `<p class="text-paper-dim text-sm p-6">Loading…</p>`;
+        try {
+          const { problems } = await api.problems.list(filter);
+          container.innerHTML = problems.length
+            ? problems.map(problemRowHTML).join('')
+            : `<p class="text-paper-muted text-sm p-8 text-center">Nothing here yet.</p>`;
+          attachDoneHandlers();
+        } catch (err) {
+          container.innerHTML = `<p class="text-overdue text-sm p-6">${err.message}</p>`;
+        }
+      }
+
+      function attachDoneHandlers() {
+        container.querySelectorAll('.js-done-btn').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const { id, stage } = btn.dataset;
+            btn.disabled = true;
+            btn.textContent = '…';
+            try {
+              await api.problems.completeStage(id, Number(stage));
+              toast('Nice — revision logged.', 'success');
+              const activeTab = document.querySelector('#filter-tabs button.\\!bg-spark');
+              await loadList(activeTab.dataset.filter);
+            } catch (err) {
+              toast(err.message, 'error');
+              btn.disabled = false;
+              btn.textContent = 'Done';
+            }
+          });
+        });
+      }
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          setActiveTab(tab.dataset.filter);
+          loadList(tab.dataset.filter);
+        });
+      });
+
+      loadList('');
+    })();
+  </script>
+</body>
+</html>

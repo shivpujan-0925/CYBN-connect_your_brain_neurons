@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stats — CYBN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./dashboard.html" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+      </a>
+      <a href="./dashboard.html" class="nav-link">← Back to dashboard</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-6 py-10" id="page-root">
+    <h1 class="font-display text-2xl font-semibold mb-8">Your stats</h1>
+
+    <!-- Streaks -->
+    <div class="grid sm:grid-cols-2 gap-6 mb-6">
+      <div class="card p-8 text-center">
+        <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-3">current streak</p>
+        <p id="current-streak" class="text-5xl font-display font-semibold text-spark">—</p>
+        <p class="text-sm text-paper-muted mt-2">consecutive days showing up</p>
+      </div>
+      <div class="card p-8 text-center">
+        <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-3">longest streak</p>
+        <p id="longest-streak" class="text-5xl font-display font-semibold text-dendrite">—</p>
+        <p class="text-sm text-paper-muted mt-2">your best run so far</p>
+      </div>
+    </div>
+
+    <!-- Weekly activity -->
+    <div class="card p-8 mb-6">
+      <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-6">problems logged · last 8 weeks</p>
+      <div id="weekly-chart" class="flex items-end gap-3 h-40"></div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-6">
+      <!-- Difficulty breakdown -->
+      <div class="card p-8">
+        <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-6">difficulty spread</p>
+        <div id="difficulty-chart" class="space-y-4"></div>
+      </div>
+
+      <!-- Topic breakdown -->
+      <div class="card p-8">
+        <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-6">top topics</p>
+        <div id="topic-chart" class="space-y-4"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-ink-600/60 mt-auto">
+    <div class="max-w-6xl mx-auto px-6 py-8 text-center">
+      <p class="text-xs text-paper-dim font-mono">-- Build for Engineers, by the engineer.</p>
+    </div>
+  </footer>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script>
+    (async function init() {
+      const user = await requireSession();
+      if (!user) return;
+
+      let stats;
+      try {
+        ({ stats } = await api.users.stats());
+      } catch (err) {
+        document.getElementById('page-root').innerHTML = `<p class="text-overdue">${err.message}</p>`;
+        return;
+      }
+
+      document.getElementById('current-streak').textContent = stats.currentStreak;
+      document.getElementById('longest-streak').textContent = stats.longestStreak;
+
+      // --- Weekly activity bar chart ---
+      const weeklyChart = document.getElementById('weekly-chart');
+      const maxWeekly = Math.max(1, ...stats.weeklyActivity.map((w) => w.count));
+      weeklyChart.innerHTML = stats.weeklyActivity.map((w) => {
+        const heightPct = Math.max(4, Math.round((w.count / maxWeekly) * 100));
+        return `
+          <div class="flex-1 flex flex-col items-center justify-end h-full gap-2">
+            <span class="text-xs font-mono text-paper-muted">${w.count || ''}</span>
+            <div class="w-full rounded-t-md bg-gradient-to-t from-dendrite to-spark" style="height: ${heightPct}%"></div>
+            <span class="text-[10px] font-mono text-paper-dim">${w.label}</span>
+          </div>`;
+      }).join('');
+
+      // --- Difficulty breakdown ---
+      const diffColors = { Easy: 'bg-mastered', Medium: 'bg-spark', Hard: 'bg-overdue' };
+      const totalDiff = Object.values(stats.difficultyBreakdown).reduce((a, b) => a + b, 0) || 1;
+      const difficultyChart = document.getElementById('difficulty-chart');
+      difficultyChart.innerHTML = Object.entries(stats.difficultyBreakdown).map(([label, count]) => `
+        <div>
+          <div class="flex justify-between text-sm mb-1.5">
+            <span class="text-paper">${label}</span>
+            <span class="text-paper-dim font-mono">${count}</span>
+          </div>
+          <div class="h-2 w-full rounded-full bg-ink-700 overflow-hidden">
+            <div class="h-full rounded-full ${diffColors[label]}" style="width: ${Math.round((count / totalDiff) * 100)}%"></div>
+          </div>
+        </div>`).join('');
+
+      // --- Topic breakdown ---
+      const topicChart = document.getElementById('topic-chart');
+      if (stats.topicBreakdown.length === 0) {
+        topicChart.innerHTML = `<p class="text-paper-dim text-sm">No problems logged yet.</p>`;
+      } else {
+        const maxTopic = Math.max(...stats.topicBreakdown.map((t) => t.count));
+        topicChart.innerHTML = stats.topicBreakdown.map((t) => `
+          <div>
+            <div class="flex justify-between text-sm mb-1.5">
+              <span class="text-paper truncate pr-2">${escapeHtml(t.topic)}</span>
+              <span class="text-paper-dim font-mono shrink-0">${t.count}</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-ink-700 overflow-hidden">
+              <div class="h-full rounded-full bg-dendrite" style="width: ${Math.round((t.count / maxTopic) * 100)}%"></div>
+            </div>
+          </div>`).join('');
+      }
+    })();
+  </script>
+</body>
+</html>

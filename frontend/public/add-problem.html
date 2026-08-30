@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add problem — CYBN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./dashboard.html" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+      </a>
+      <div class="flex items-center gap-5"><a href="./stats.html" class="nav-link">Stats</a><a href="./dashboard.html" class="nav-link">← Back to dashboard</a></div>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-2xl w-full mx-auto px-6 py-12">
+    <div class="mb-8">
+      <p class="font-mono text-xs uppercase tracking-widest text-dendrite mb-2">Day 0</p>
+      <h1 class="font-display text-3xl font-semibold">Log a solved problem</h1>
+      <p class="text-paper-muted mt-2">
+        This marks today as Day 0. CYBN will schedule Day 1 (+1 day), Day 2 (+3 days),
+        Day 3 (+7 days), and Day 4 (+15 days) automatically.
+      </p>
+    </div>
+
+    <div class="card p-6 mb-6 border-dendrite/30">
+      <label class="label" for="leetcode-url">Import from LeetCode (optional)</label>
+      <div class="flex gap-2">
+        <input class="input" id="leetcode-url" type="url" placeholder="https://leetcode.com/problems/two-sum/" />
+        <button type="button" id="import-btn" class="btn-secondary shrink-0">Fetch details</button>
+      </div>
+      <p id="import-status" class="text-xs text-paper-dim mt-2">Paste a LeetCode problem link to auto-fill the name, difficulty, and topics below.</p>
+    </div>
+
+    <form id="add-problem-form" class="card p-8 space-y-5">
+      <div>
+        <label class="label" for="name">Problem name *</label>
+        <input class="input" id="name" name="name" type="text" placeholder="e.g. Two Sum" required />
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="label" for="topic">Topic</label>
+          <input class="input" id="topic" name="topic" type="text" placeholder="e.g. Arrays" />
+        </div>
+        <div>
+          <label class="label" for="pattern">Pattern</label>
+          <input class="input" id="pattern" name="pattern" type="text" placeholder="e.g. Hash Map" />
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="label" for="time_complexity">Time complexity</label>
+          <input class="input font-mono" id="time_complexity" name="time_complexity" type="text" placeholder="O(n)" />
+        </div>
+        <div>
+          <label class="label" for="space_complexity">Space complexity</label>
+          <input class="input font-mono" id="space_complexity" name="space_complexity" type="text" placeholder="O(1)" />
+        </div>
+      </div>
+
+      <div>
+        <label class="label" for="difficulty">Difficulty</label>
+        <select class="input" id="difficulty" name="difficulty">
+          <option value="Easy">Easy</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="label" for="link">Problem link (optional)</label>
+        <input class="input" id="link" name="link" type="url" placeholder="https://leetcode.com/problems/…" />
+      </div>
+
+      <div>
+        <label class="label" for="notes">Notes (optional)</label>
+        <textarea class="input" id="notes" name="notes" rows="4" placeholder="Key insight, edge cases to remember…"></textarea>
+      </div>
+
+      <p id="form-error" class="text-sm text-overdue hidden"></p>
+
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn-primary flex-1 text-base py-3" id="submit-btn">Add to my pathway</button>
+        <a href="./dashboard.html" class="btn-secondary py-3">Cancel</a>
+      </div>
+    </form>
+  </main>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script>
+    (async function init() {
+      const user = await requireSession();
+      if (!user) return;
+
+      const form = document.getElementById('add-problem-form');
+      const errorEl = document.getElementById('form-error');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // --- LeetCode import ---
+      const importBtn = document.getElementById('import-btn');
+      const importStatus = document.getElementById('import-status');
+      importBtn.addEventListener('click', async () => {
+        const url = document.getElementById('leetcode-url').value.trim();
+        if (!url) {
+          importStatus.textContent = 'Paste a LeetCode problem URL first.';
+          importStatus.classList.add('text-overdue');
+          return;
+        }
+        importBtn.disabled = true;
+        importBtn.textContent = 'Fetching…';
+        importStatus.classList.remove('text-overdue');
+        importStatus.textContent = 'Looking it up…';
+        try {
+          const { imported } = await api.problems.importFromLeetCode(url);
+          form.name.value = imported.name || '';
+          form.difficulty.value = imported.difficulty || 'Medium';
+          form.topic.value = imported.topic || '';
+          form.link.value = imported.link || url;
+          importStatus.textContent = `Loaded "${imported.name}" — review the fields below, then add it.`;
+        } catch (err) {
+          importStatus.textContent = `${err.message} You can still fill the form in by hand.`;
+          importStatus.classList.add('text-overdue');
+        } finally {
+          importBtn.disabled = false;
+          importBtn.textContent = 'Fetch details';
+        }
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Adding…';
+
+        const payload = Object.fromEntries(new FormData(form).entries());
+        if (!payload.name.trim()) {
+          errorEl.textContent = 'Problem name is required.';
+          errorEl.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Add to my pathway';
+          return;
+        }
+
+        try {
+          const { problem } = await api.problems.create(payload);
+          window.location.href = `./problem.html?id=${problem.id}`;
+        } catch (err) {
+          errorEl.textContent = err.message;
+          errorEl.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Add to my pathway';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

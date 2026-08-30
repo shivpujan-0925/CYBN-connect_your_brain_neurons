@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — CYBN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Navbar (authenticated) -->
+  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <a href="./dashboard.html" class="flex items-center gap-2 shrink-0">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight hidden sm:inline">CYBN</span>
+      </a>
+
+      <div class="relative flex-1 max-w-sm hidden md:block">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-paper-dim" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="search-input" type="text" placeholder="Search your problems…" class="input pl-9 py-2 bg-ink-800" />
+      </div>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <div id="streak-badge" class="hidden items-center gap-1.5 rounded-full bg-spark/10 px-3 py-1.5 text-sm font-mono text-spark">
+          <span>🔥</span><span id="streak-count">0</span>
+        </div>
+        <a href="./stats.html" class="nav-link hidden sm:inline">Stats</a>
+        <a href="./dashboard.html" class="nav-link hidden sm:inline">Home</a>
+        <button id="logout-btn" class="btn-ghost">Log out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-10">
+    <!-- Search results (hidden until used) -->
+    <div id="search-results" class="hidden mb-10">
+      <h2 class="font-display text-lg font-semibold mb-4">Search results</h2>
+      <div id="search-results-list" class="space-y-3"></div>
+    </div>
+
+    <div id="main-content">
+      <!-- Profile + Progress row -->
+      <div class="grid lg:grid-cols-[320px_1fr] gap-6 mb-10">
+        <!-- Profile card -->
+        <div class="card p-6 flex flex-col">
+          <div class="flex items-center gap-4">
+            <div class="relative shrink-0">
+              <img id="avatar-img" src="" alt="Profile photo" class="h-16 w-16 rounded-full object-cover border-2 border-ink-600" />
+              <button id="avatar-edit-btn" title="Change photo" class="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-spark text-ink-950 flex items-center justify-center shadow-card">
+                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 112.828 2.828L11.828 13.828 8 15l1.172-3.828z"/></svg>
+              </button>
+              <input id="avatar-input" type="file" accept="image/*" class="hidden" />
+            </div>
+            <div class="min-w-0">
+              <p id="profile-username" class="font-display font-semibold text-lg truncate">—</p>
+              <p id="profile-id" class="text-xs text-paper-dim font-mono truncate">—</p>
+            </div>
+          </div>
+          <a href="./add-problem.html" class="btn-primary w-full mt-6">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            Add problem
+          </a>
+        </div>
+
+        <!-- DSA progress -->
+        <div class="card p-6 sm:p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-1">DSA progress · real-time</p>
+              <h2 class="text-lg font-display font-semibold">Your pathway so far</h2>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <div>
+              <p id="stat-total" class="text-3xl font-display font-semibold">—</p>
+              <p class="text-sm text-paper-muted mt-1">total solved</p>
+            </div>
+            <div>
+              <p id="stat-mastered" class="text-3xl font-display font-semibold text-mastered">—</p>
+              <p class="text-sm text-paper-muted mt-1">finished w/ revision</p>
+            </div>
+            <div>
+              <p id="stat-due" class="text-3xl font-display font-semibold text-spark">—</p>
+              <p class="text-sm text-paper-muted mt-1">due today</p>
+            </div>
+            <div>
+              <p id="stat-streak" class="text-3xl font-display font-semibold text-dendrite">—</p>
+              <p class="text-sm text-paper-muted mt-1">day streak</p>
+            </div>
+          </div>
+          <div class="h-2.5 w-full rounded-full bg-ink-700 overflow-hidden mb-1">
+            <div id="progress-bar-fill" class="h-full rounded-full bg-gradient-to-r from-dendrite to-spark transition-all duration-700" style="width: 0%"></div>
+          </div>
+          <p id="progress-bar-label" class="text-xs text-paper-dim font-mono mb-6">—</p>
+
+          <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-3">consistency, last 12 weeks</p>
+          <div id="consistency-graph" class="flex gap-1 overflow-x-auto pb-1"></div>
+        </div>
+      </div>
+
+      <!-- Due today / overdue -->
+      <section class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-display text-lg font-semibold">Due for revision today</h2>
+          <span id="due-count-badge" class="pill-medium"></span>
+        </div>
+        <div id="due-list" class="space-y-3">
+          <p class="text-paper-dim text-sm">Loading…</p>
+        </div>
+      </section>
+
+      <!-- Total problem list -->
+      <section>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-display text-lg font-semibold">Total problem revision list</h2>
+        </div>
+        <div class="card divide-y divide-ink-600/60" id="total-list">
+          <p class="text-paper-dim text-sm p-6">Loading…</p>
+        </div>
+        <div class="text-center mt-5">
+          <a href="./problems.html" class="btn-secondary" id="view-all-btn">View all problems</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-ink-600/60 mt-auto">
+    <div class="max-w-6xl mx-auto px-6 py-8 text-center">
+      <p class="text-xs text-paper-dim font-mono">-- Build for Engineers, by the engineer.</p>
+    </div>
+  </footer>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/dashboard.js"></script>
+</body>
+</html>

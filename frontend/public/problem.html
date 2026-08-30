@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Problem — CYBN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./dashboard.html" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+      </a>
+      <div class="flex items-center gap-5"><a href="./stats.html" class="nav-link">Stats</a><a href="./dashboard.html" class="nav-link">← Back to dashboard</a></div>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-3xl w-full mx-auto px-6 py-10" id="page-root">
+    <p class="text-paper-dim">Loading…</p>
+  </main>
+
+  <template id="problem-template">
+    <div class="flex items-start justify-between gap-4 mb-8 flex-wrap">
+      <div>
+        <span class="js-difficulty-pill mb-2 inline-block"></span>
+        <h1 class="font-display text-3xl font-semibold js-name"></h1>
+      </div>
+      <div class="flex gap-2 shrink-0">
+        <button class="btn-secondary js-edit-btn">Edit</button>
+        <button class="btn-danger js-delete-btn">Delete</button>
+      </div>
+    </div>
+
+    <!-- Synapse pathway stepper (signature motif, reused from hero) -->
+    <div class="card p-6 sm:p-8 mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-paper-dim">revision pathway</p>
+        <span class="js-status-pill"></span>
+      </div>
+      <div class="flex items-center js-stepper"></div>
+      <div class="flex items-center mt-3 text-[11px] font-mono text-paper-dim js-stepper-labels"></div>
+
+      <div class="mt-6 pt-6 border-t border-ink-600/60 flex items-center justify-between flex-wrap gap-3">
+        <p class="text-sm text-paper-muted js-next-action-label"></p>
+        <div class="flex gap-2">
+          <button class="btn-primary js-complete-btn hidden">Mark done</button>
+          <button class="btn-secondary js-restart-btn">Restart from Day 0</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadata view -->
+    <div class="card p-6 sm:p-8 js-view-mode">
+      <h2 class="font-display text-lg font-semibold mb-5">Problem details</h2>
+      <dl class="grid sm:grid-cols-2 gap-5">
+        <div><dt class="label">Topic</dt><dd class="js-topic text-paper">—</dd></div>
+        <div><dt class="label">Pattern</dt><dd class="js-pattern text-paper">—</dd></div>
+        <div><dt class="label">Time complexity</dt><dd class="js-time font-mono text-paper">—</dd></div>
+        <div><dt class="label">Space complexity</dt><dd class="js-space font-mono text-paper">—</dd></div>
+        <div class="sm:col-span-2"><dt class="label">Link</dt><dd class="js-link text-paper">—</dd></div>
+        <div class="sm:col-span-2"><dt class="label">Notes</dt><dd class="js-notes text-paper whitespace-pre-wrap">—</dd></div>
+      </dl>
+    </div>
+
+    <!-- Metadata edit form (hidden until "Edit" is clicked) -->
+    <form class="card p-6 sm:p-8 space-y-5 js-edit-mode hidden">
+      <h2 class="font-display text-lg font-semibold mb-1">Edit problem details</h2>
+      <div>
+        <label class="label">Problem name</label>
+        <input class="input js-input-name" type="text" required />
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div><label class="label">Topic</label><input class="input js-input-topic" type="text" /></div>
+        <div><label class="label">Pattern</label><input class="input js-input-pattern" type="text" /></div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div><label class="label">Time complexity</label><input class="input font-mono js-input-time" type="text" /></div>
+        <div><label class="label">Space complexity</label><input class="input font-mono js-input-space" type="text" /></div>
+      </div>
+      <div>
+        <label class="label">Difficulty</label>
+        <select class="input js-input-difficulty">
+          <option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option>
+        </select>
+      </div>
+      <div><label class="label">Link</label><input class="input js-input-link" type="url" /></div>
+      <div><label class="label">Notes</label><textarea class="input js-input-notes" rows="4"></textarea></div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn-primary flex-1 js-save-btn">Save changes</button>
+        <button type="button" class="btn-secondary js-cancel-edit-btn">Cancel</button>
+      </div>
+    </form>
+  </template>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/problem.js"></script>
+</body>
+</html>

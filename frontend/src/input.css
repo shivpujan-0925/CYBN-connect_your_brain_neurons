@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-900 text-paper font-body antialiased;
+    background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 127, 255, 0.08), transparent);
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+  ::selection {
+    @apply bg-spark/30 text-paper;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-spark ring-offset-2 ring-offset-ink-900;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold
+           transition-all duration-200 focus-visible:ring-2 focus-visible:ring-spark focus-visible:ring-offset-2
+           focus-visible:ring-offset-ink-900 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-spark text-ink-950 hover:bg-spark-soft hover:shadow-glow active:scale-[0.98];
+  }
+  .btn-secondary {
+    @apply btn bg-ink-700 text-paper border border-ink-600 hover:border-dendrite/50 hover:text-dendrite-soft active:scale-[0.98];
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-paper-muted hover:text-paper hover:bg-ink-800;
+  }
+  .btn-danger {
+    @apply btn bg-transparent border border-overdue/40 text-overdue hover:bg-overdue/10 active:scale-[0.98];
+  }
+
+  .card {
+    @apply rounded-2xl border border-ink-600/60 bg-ink-800 shadow-card;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-ink-600 bg-ink-900 px-4 py-2.5 text-sm text-paper
+           placeholder:text-paper-dim transition-colors
+           focus:border-spark focus:outline-none focus:ring-1 focus:ring-spark;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-paper-dim;
+  }
+
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-mono font-medium;
+  }
+  .pill-easy { @apply pill bg-mastered/10 text-mastered; }
+  .pill-medium { @apply pill bg-spark/10 text-spark; }
+  .pill-hard { @apply pill bg-overdue/10 text-overdue; }
+
+  .nav-link {
+    @apply text-sm text-paper-muted transition-colors hover:text-paper;
+  }
+
+  /* Synapse pathway — the signature motif, reused in hero + dashboard + stepper */
+  .synapse-node {
+    @apply relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full
+           border-2 font-mono text-xs font-bold transition-all duration-300;
+  }
+  .synapse-node[data-state="done"] {
+    @apply border-mastered bg-mastered/15 text-mastered;
+  }
+  .synapse-node[data-state="due"] {
+    @apply border-spark bg-spark/15 text-spark animate-node-ping;
+  }
+  .synapse-node[data-state="overdue"] {
+    @apply border-overdue bg-overdue/15 text-overdue;
+  }
+  .synapse-node[data-state="pending"] {
+    @apply border-ink-600 bg-ink-800 text-paper-dim;
+  }
+  .synapse-line {
+    @apply h-[2px] flex-1 min-w-[16px] bg-ink-600 relative overflow-hidden;
+  }
+  .synapse-line[data-filled="true"] {
+    @apply bg-mastered/60;
+  }
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up — CYBN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <header class="border-b border-ink-600/60">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./index.html" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+      </a>
+      <a href="./login.html" class="nav-link">Already have an account? <span class="text-dendrite">Log in</span></a>
+    </nav>
+  </header>
+
+  <main class="flex-1 flex items-center justify-center px-6 py-16">
+    <div class="w-full max-w-md">
+      <div class="mb-8 text-center">
+        <h1 class="font-display text-3xl font-semibold">Create your account</h1>
+        <p class="text-paper-muted mt-2">Start building a revision pathway that sticks.</p>
+      </div>
+
+      <form id="signup-form" class="card p-8 space-y-5">
+        <div>
+          <label class="label" for="username">Username</label>
+          <input class="input" id="username" name="username" type="text" placeholder="e.g. neo_codes" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]+" />
+          <p class="text-xs text-paper-dim mt-1.5">3-20 characters, letters/numbers/underscore. This is your unique, permanent ID.</p>
+        </div>
+        <div>
+          <label class="label" for="email">Email</label>
+          <input class="input" id="email" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div>
+          <label class="label" for="password">Password</label>
+          <input class="input" id="password" name="password" type="password" placeholder="At least 8 characters" required minlength="8" />
+        </div>
+        <p id="form-error" class="text-sm text-overdue hidden"></p>
+        <button type="submit" class="btn-primary w-full text-base py-3" id="submit-btn">Create account</button>
+      </form>
+
+      <p class="text-center text-xs text-paper-dim mt-6 font-mono">-- Build for Engineers, by the engineer.</p>
+    </div>
+  </main>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script>
+    const form = document.getElementById('signup-form');
+    const errorEl = document.getElementById('form-error');
+    const submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account…';
+
+      const payload = {
+        username: form.username.value.trim(),
+        email: form.email.value.trim(),
+        password: form.password.value,
+      };
+
+      try {
+        await api.auth.signup(payload);
+        window.location.href = './dashboard.html';
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create account';
+      }
+    });
+  </script>
+</body>
+</html>

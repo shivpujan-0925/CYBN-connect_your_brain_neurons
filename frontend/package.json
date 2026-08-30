@@ -1,0 +1,13 @@
+{
+  "name": "cybn-frontend",
+  "version": "1.0.0",
+  "description": "CYBN (Connect Your Brain Neurons) - static frontend, built with Tailwind CSS",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./public/css/output.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./public/css/output.css --watch",
+    "serve": "npx --yes http-server ./public -p 3000 -c-1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.13"
+  }
+}

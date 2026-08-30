@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBN — Connect Your Brain Neurons</title>
+  <meta name="description" content="A spaced-repetition tracker for engineers who solve DSA problems and actually want to remember them." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/output.css" />
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./index.html" class="flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
+        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+      </a>
+      <div class="hidden sm:flex items-center gap-8">
+        <a href="./index.html" class="nav-link">Home</a>
+        <a href="#how-it-works" class="nav-link">How it works</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="./login.html" class="btn-ghost">Log in</a>
+        <a href="./signup.html" class="btn-primary">Sign up</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-1">
+    <!-- Hero -->
+    <section class="max-w-6xl mx-auto px-6 pt-20 pb-24">
+      <div class="max-w-2xl animate-fade-up">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-dendrite mb-4">for engineers who grind DSA</p>
+        <h1 class="font-display text-5xl sm:text-6xl font-semibold tracking-tight leading-[1.05]">
+          Connect Your <span class="text-spark">Brain Neurons</span>.
+        </h1>
+        <p class="mt-6 text-lg text-paper-muted leading-relaxed">
+          You solved it once. That's not the same as knowing it. CYBN schedules your
+          revisions on a proven spaced-repetition curve — Day&nbsp;1, Day&nbsp;3, Day&nbsp;7, Day&nbsp;15 —
+          so the pattern actually sticks before your next interview.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-4">
+          <a href="./signup.html" class="btn-primary text-base px-6 py-3">Start tracking, free</a>
+          <a href="#how-it-works" class="btn-secondary text-base px-6 py-3">See how it works</a>
+        </div>
+      </div>
+
+      <!-- Signature element: synapse pathway, literalizing the Day0→Day5 schedule -->
+      <div class="mt-20 card p-8 sm:p-10 overflow-hidden relative" id="hero-pathway">
+        <div class="absolute inset-0 pointer-events-none opacity-40" style="background: radial-gradient(circle at 15% 30%, rgba(139,127,255,0.15), transparent 45%), radial-gradient(circle at 85% 70%, rgba(242,184,75,0.12), transparent 45%);"></div>
+        <p class="relative font-mono text-xs uppercase tracking-widest text-paper-dim mb-8">the revision pathway</p>
+        <div class="relative flex items-center">
+          <div class="synapse-node" data-state="done">D0</div>
+          <div class="synapse-line" data-filled="true"></div>
+          <div class="synapse-node" data-state="done">D1</div>
+          <div class="synapse-line" data-filled="true"></div>
+          <div class="synapse-node" data-state="due">D2</div>
+          <div class="synapse-line" data-filled="false"></div>
+          <div class="synapse-node" data-state="pending">D3</div>
+          <div class="synapse-line" data-filled="false"></div>
+          <div class="synapse-node" data-state="pending">D4</div>
+          <div class="synapse-line" data-filled="false"></div>
+          <div class="synapse-node" data-state="pending">D5</div>
+        </div>
+        <div class="relative flex items-center mt-3 text-[11px] font-mono text-paper-dim">
+          <span class="w-9 text-center">solved</span>
+          <span class="flex-1 min-w-[16px]"></span>
+          <span class="w-9 text-center">+1d</span>
+          <span class="flex-1 min-w-[16px]"></span>
+          <span class="w-9 text-center">+3d</span>
+          <span class="flex-1 min-w-[16px]"></span>
+          <span class="w-9 text-center">+7d</span>
+          <span class="flex-1 min-w-[16px]"></span>
+          <span class="w-9 text-center">+15d</span>
+          <span class="flex-1 min-w-[16px]"></span>
+          <span class="w-9 text-center">mastered</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / functionality -->
+    <section id="how-it-works" class="max-w-6xl mx-auto px-6 pb-24 grid sm:grid-cols-2 gap-6">
+      <div class="card p-8">
+        <div class="h-10 w-10 rounded-lg bg-dendrite/15 flex items-center justify-center text-dendrite font-mono font-bold mb-5">01</div>
+        <h2 class="text-xl font-display font-semibold mb-3">Log a problem once</h2>
+        <p class="text-paper-muted leading-relaxed">
+          Solved something new? Add the name, topic, pattern, and complexity in seconds.
+          That's Day 0 — CYBN takes it from there and quietly schedules the four revisions
+          that turn a one-off solve into something you actually own.
+        </p>
+      </div>
+      <div class="card p-8">
+        <div class="h-10 w-10 rounded-lg bg-spark/15 flex items-center justify-center text-spark font-mono font-bold mb-5">02</div>
+        <h2 class="text-xl font-display font-semibold mb-3">Show up when it's due</h2>
+        <p class="text-paper-muted leading-relaxed">
+          Your dashboard surfaces exactly what's due today, and calls out anything you
+          skipped. A consistency graph keeps the streak visible — no cramming, just
+          steady, spaced practice.
+        </p>
+      </div>
+    </section>
+
+    <!-- Demo progress bar (pseudo, before login) -->
+    <section class="max-w-6xl mx-auto px-6 pb-28">
+      <div class="card p-8 sm:p-10">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-1">preview</p>
+            <h3 class="text-lg font-display font-semibold">What your progress looks like</h3>
+          </div>
+          <span class="pill-easy">demo data</span>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-6 mb-8">
+          <div>
+            <p class="text-3xl font-display font-semibold text-paper">128</p>
+            <p class="text-sm text-paper-muted mt-1">problems solved</p>
+          </div>
+          <div>
+            <p class="text-3xl font-display font-semibold text-mastered">74</p>
+            <p class="text-sm text-paper-muted mt-1">fully mastered</p>
+          </div>
+          <div>
+            <p class="text-3xl font-display font-semibold text-spark">6</p>
+            <p class="text-sm text-paper-muted mt-1">due today</p>
+          </div>
+        </div>
+        <div class="h-2.5 w-full rounded-full bg-ink-700 overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-dendrite to-spark" style="width: 58%"></div>
+        </div>
+        <p class="text-xs text-paper-dim mt-2 font-mono">58% of your active problems fully revised</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-ink-600/60">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-xs text-paper-dim font-mono">© <span id="year"></span> CYBN. All rights reserved.</p>
+      <p class="text-xs text-paper-dim font-mono">-- Build for Engineers, by the engineer.</p>
+    </div>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
