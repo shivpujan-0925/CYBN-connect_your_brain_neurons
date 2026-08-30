@@ -1,7 +1,11 @@
-// Shared API client — talks to the CYBN backend, credentials included so the
-// httpOnly auth cookie rides along automatically.
+// Shared API client — talks to the CYBN backend. Auth uses a Bearer token stored
+// in localStorage rather than relying on the cross-origin cookie: browsers treat
+// third-party cookies very inconsistently (Brave blocks them by default, Chrome's
+// own third-party-cookie phase-out can too), so a token sent explicitly via the
+// Authorization header works reliably everywhere regardless of cookie policy.
 
 const API_BASE = window.CYBN_API_BASE || 'http://localhost:5000/api';
+const TOKEN_KEY = 'cybn_token';
 
 async function request(path, { method = 'GET', body, isForm = false } = {}) {
   const opts = {
@@ -9,6 +13,11 @@ async function request(path, { method = 'GET', body, isForm = false } = {}) {
     credentials: 'include',
     headers: {},
   };
+
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token) {
+    opts.headers['Authorization'] = `Bearer ${token}`;
+  }
 
   if (body && !isForm) {
     opts.headers['Content-Type'] = 'application/json';
@@ -36,9 +45,25 @@ async function request(path, { method = 'GET', body, isForm = false } = {}) {
 
 const api = {
   auth: {
-    signup: (payload) => request('/auth/signup', { method: 'POST', body: payload }),
-    login: (payload) => request('/auth/login', { method: 'POST', body: payload }),
-    logout: () => request('/auth/logout', { method: 'POST' }),
+    signup: async (payload) => {
+      const data = await request('/auth/signup', { method: 'POST', body: payload });
+      if (data.token) localStorage.setItem(TOKEN_KEY, data.token);
+      return data;
+    },
+    login: async (payload) => {
+      const data = await request('/auth/login', { method: 'POST', body: payload });
+      if (data.token) localStorage.setItem(TOKEN_KEY, data.token);
+      return data;
+    },
+    logout: async () => {
+      localStorage.removeItem(TOKEN_KEY);
+      try {
+        await request('/auth/logout', { method: 'POST' });
+      } catch {
+        // token is already cleared locally either way — a failed server call here is harmless
+      }
+      return { ok: true };
+    },
     me: () => request('/auth/me'),
   },
   users: {
