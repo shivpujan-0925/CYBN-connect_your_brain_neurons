@@ -9,6 +9,7 @@ const problemRoutes = require('./routes/problem.routes');
 const { notFound, errorHandler } = require('./middleware/error.middleware');
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(helmet());
 

@@ -6,14 +6,21 @@ const ApiError = require('../utils/ApiError');
 
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-function cookieOptions() {
-  return {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: COOKIE_MAX_AGE_MS,
-  };
-}
+// function cookieOptions() {
+//   return {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'production',
+//     sameSite: 'lax',
+//     maxAge: COOKIE_MAX_AGE_MS,
+//   };
+// }
+
+function cookieOptions() { const isProd = process.env.NODE_ENV === 'production';
+   return { httpOnly: true,
+            secure: isProd, 
+            sameSite: isProd ? 'none' : 'lax', maxAge: COOKIE_MAX_AGE_MS,
+           }; 
+          }
 
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -60,10 +67,12 @@ const login = asyncHandler(async (req, res) => {
   res.json({ ok: true, user: user.toJSON(), token });
 });
 
-const logout = asyncHandler(async (req, res) => {
-  res.clearCookie(process.env.COOKIE_NAME || 'cybn_token');
-  res.json({ ok: true });
-});
+// const logout = asyncHandler(async (req, res) => {
+//   res.clearCookie(process.env.COOKIE_NAME || 'cybn_token');
+//   res.json({ ok: true });
+// });
+
+const logout = asyncHandler(async (req, res) => { const { maxAge, ...clearOptions } = cookieOptions(); res.clearCookie(process.env.COOKIE_NAME || 'cybn_token', clearOptions); res.json({ ok: true }); });
 
 const me = asyncHandler(async (req, res) => {
   res.json({ ok: true, user: req.user });
