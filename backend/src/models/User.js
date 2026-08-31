@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema(
     password_hash: { type: String, required: true },
     avatar_url: { type: String, default: null },
     avatar_public_id: { type: String, default: null }, // Cloudinary public_id, to replace/delete old uploads
+    reset_password_token: { type: String, default: null, select: false }, // sha256 hash of the raw token emailed to the user
+    reset_password_expires: { type: Date, default: null, select: false },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: false },
@@ -24,6 +26,8 @@ const userSchema = new mongoose.Schema(
         delete ret.__v;
         delete ret.password_hash;
         delete ret.avatar_public_id;
+        delete ret.reset_password_token;
+        delete ret.reset_password_expires;
         return ret;
       },
     },

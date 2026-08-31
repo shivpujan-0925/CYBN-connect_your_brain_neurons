@@ -65,6 +65,8 @@ const api = {
       return { ok: true };
     },
     me: () => request('/auth/me'),
+    forgotPassword: (email) => request('/auth/forgot-password', { method: 'POST', body: { email } }),
+    resetPassword: (token, password) => request('/auth/reset-password', { method: 'POST', body: { token, password } }),
   },
   users: {
     overview: () => request('/users/overview'),
@@ -131,6 +133,47 @@ function toast(message, variant = 'default') {
   el.textContent = message;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 3200);
+}
+
+/** Custom confirmation modal — replaces the browser's native confirm() popup with
+ *  a styled card matching the rest of the app. Returns a Promise<boolean>: true if
+ *  the person confirmed, false if they cancelled (Cancel button, backdrop click, or Esc). */
+function showConfirmModal({ title = 'Are you sure?', message = '', confirmText = 'Confirm', cancelText = 'Cancel', danger = false } = {}) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4';
+
+    const confirmBtnClass = danger ? 'btn-danger' : 'btn-primary';
+
+    overlay.innerHTML = `
+      <div class="card w-full max-w-sm p-6 animate-fade-up" role="dialog" aria-modal="true" style="animation-duration: 0.18s;">
+        <h3 class="font-display text-lg font-semibold text-paper mb-2">${escapeHtml(title)}</h3>
+        <p class="text-sm text-paper-muted mb-6">${escapeHtml(message)}</p>
+        <div class="flex gap-3 justify-end">
+          <button type="button" class="btn-secondary js-modal-cancel">${escapeHtml(cancelText)}</button>
+          <button type="button" class="${confirmBtnClass} js-modal-confirm">${escapeHtml(confirmText)}</button>
+        </div>
+      </div>`;
+
+    function cleanup(result) {
+      document.removeEventListener('keydown', onKeydown);
+      overlay.remove();
+      resolve(result);
+    }
+    function onKeydown(e) {
+      if (e.key === 'Escape') cleanup(false);
+    }
+
+    overlay.querySelector('.js-modal-cancel').addEventListener('click', () => cleanup(false));
+    overlay.querySelector('.js-modal-confirm').addEventListener('click', () => cleanup(true));
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) cleanup(false); // clicking the backdrop cancels
+    });
+    document.addEventListener('keydown', onKeydown);
+
+    document.body.appendChild(overlay);
+    overlay.querySelector('.js-modal-confirm').focus();
+  });
 }
 
 const DIFFICULTY_PILL = { Easy: 'pill-easy', Medium: 'pill-medium', Hard: 'pill-hard' };

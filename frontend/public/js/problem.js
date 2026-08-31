@@ -184,9 +184,11 @@
 
   // --- Restart ---
   q('.js-restart-btn').addEventListener('click', async () => {
-    const confirmed = window.confirm(
-      'Restart this problem from Day 0? Your revision progress on it will reset.'
-    );
+    const confirmed = await showConfirmModal({
+      title: 'Restart from Day 0?',
+      message: 'Your revision progress on this problem will reset. This can\'t be undone.',
+      confirmText: 'Restart',
+    });
     if (!confirmed) return;
     try {
       ({ problem } = await api.problems.restart(problem.id));
@@ -199,7 +201,12 @@
 
   // --- Delete ---
   q('.js-delete-btn').addEventListener('click', async () => {
-    const confirmed = window.confirm(`Delete "${problem.name}" permanently? This can't be undone.`);
+    const confirmed = await showConfirmModal({
+      title: 'Delete this problem?',
+      message: `"${problem.name}" will be permanently deleted. This can't be undone.`,
+      confirmText: 'Delete',
+      danger: true,
+    });
     if (!confirmed) return;
     try {
       await api.problems.remove(problem.id);
