@@ -1,148 +1,387 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CYBN — Connect Your Brain Neurons</title>
-  <meta name="description" content="A spaced-repetition tracker for engineers who solve DSA problems and actually want to remember them." />
+  <title>CYBN — Connect Your Brain Neurons | Spaced Repetition for DSA</title>
+  <meta name="description" content="A modern spaced-repetition tracker for software engineers grinding DSA problems. Master patterns with 1d, 3d, 7d, and 15d review intervals." />
+  
+  <!-- Anti-FOUC theme detector -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('cybn_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/output.css" />
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col selection:bg-spark/20 selection:text-spark-dim dark:selection:text-spark-soft">
 
-  <!-- Navbar -->
-  <header class="border-b border-ink-600/60 sticky top-0 z-40 bg-ink-900/80 backdrop-blur">
-    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="./index.html" class="flex items-center gap-2">
-        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spark/15 text-spark font-display font-bold">C</span>
-        <span class="font-display font-semibold text-lg tracking-tight">CYBN</span>
+  <!-- Floating Pill-box Navbar with Mobile Drawer/Menu -->
+  <header class="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 w-full max-w-5xl mx-auto">
+    <nav class="pill-navbar backdrop-blur-xl relative">
+      <!-- Logo: Production-grade Static Interconnected Brain Neurons -->
+      <a href="./index.html" class="flex items-center gap-2.5 group shrink-0">
+        <div class="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-slate-900 to-slate-950 dark:from-ink-800 dark:to-ink-950 border border-spark/40 shadow-sm group-hover:border-spark transition-colors duration-200">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Synaptic Connecting Pathways -->
+            <path d="M12 12L5 6M12 12L19 6M12 12L4 16M12 12L20 16M12 12L12 3M5 6L12 3M19 6L12 3" stroke="#F59E0B" stroke-width="1.25" stroke-linecap="round" stroke-opacity="0.65" />
+            <path d="M5 6L4 16M19 6L20 16" stroke="#818CF8" stroke-width="1" stroke-dasharray="1.5 1.5" stroke-opacity="0.6" />
+            
+            <!-- Dendrite Peripheral Neurons -->
+            <circle cx="12" cy="3" r="1.6" fill="#818CF8" />
+            <circle cx="5" cy="6" r="1.8" fill="#FBBF24" />
+            <circle cx="19" cy="6" r="1.8" fill="#818CF8" />
+            <circle cx="4" cy="16" r="1.6" fill="#34D399" />
+            <circle cx="20" cy="16" r="1.6" fill="#FBBF24" />
+            
+            <!-- Central Active Neuron Soma -->
+            <circle cx="12" cy="12" r="2.8" fill="#F59E0B" />
+            <circle cx="12" cy="12" r="4.2" stroke="#F59E0B" stroke-width="0.75" stroke-opacity="0.4" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display font-bold text-base tracking-tight leading-none text-light-ink dark:text-paper group-hover:text-spark transition-colors">CYBN</span>
+          <span class="text-[9px] font-mono text-light-muted dark:text-paper-dim tracking-wider uppercase">synapse tracker</span>
+        </div>
       </a>
-      <div class="hidden sm:flex items-center gap-8">
-        <a href="./index.html" class="nav-link">Home</a>
-        <a href="#how-it-works" class="nav-link">How it works</a>
+
+      <!-- Center Links (Desktop) -->
+      <div class="hidden md:flex items-center gap-1 bg-slate-100/80 dark:bg-ink-900/60 p-1 rounded-full border border-light-border/60 dark:border-ink-600/40">
+        <a href="./index.html" class="nav-pill-link-active">Overview</a>
+        <a href="#how-it-works" class="nav-pill-link">How it works</a>
+        <a href="#curve" class="nav-pill-link">The Curve</a>
+        <a href="#preview" class="nav-pill-link">Live Preview</a>
       </div>
-      <div class="flex items-center gap-3">
-        <a href="./login.html" class="btn-ghost">Log in</a>
-        <a href="./signup.html" class="btn-primary">Sign up</a>
+
+      <!-- Right Action Items: Theme Toggle, Log In & Signup Icon Button + Mobile Toggle -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- Theme Toggle -->
+        <button type="button" class="js-theme-toggle h-9 w-9 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" title="Toggle theme">
+          <span class="js-theme-icon"></span>
+        </button>
+
+        <!-- Log In (Desktop) -->
+        <a href="./login.html" class="hidden sm:inline-flex btn-ghost !px-3 !py-1.5 text-xs sm:text-sm font-medium">Log in</a>
+
+        <!-- Simple Signup Icon Button (replaces Get Started text button) -->
+        <a href="./signup.html" class="h-9 px-3 sm:px-3.5 rounded-full bg-spark text-ink-950 hover:bg-spark-soft inline-flex items-center justify-center gap-1.5 shadow-sm hover:shadow-glow transition-all active:scale-95" title="Sign up for CYBN">
+          <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+          <span class="text-xs font-bold tracking-tight hidden sm:inline">Sign up</span>
+        </a>
+
+        <!-- Mobile Menu Hamburger Button -->
+        <button type="button" id="mobile-menu-btn" class="md:hidden h-9 w-9 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" aria-label="Toggle navigation menu">
+          <svg id="menu-icon-open" class="h-4 w-4 text-light-ink dark:text-paper" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg id="menu-icon-close" class="h-4 w-4 text-light-ink dark:text-paper hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Dropdown Navigation Panel -->
+      <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 mt-2 p-4 card backdrop-blur-2xl shadow-xl z-50 animate-fade-up">
+        <div class="flex flex-col gap-2">
+          <a href="./index.html" class="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 dark:bg-ink-800 text-light-ink dark:text-paper">Overview</a>
+          <a href="#how-it-works" class="px-4 py-2 rounded-xl text-sm text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">How it works</a>
+          <a href="#curve" class="px-4 py-2 rounded-xl text-sm text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">The Curve</a>
+          <a href="#preview" class="px-4 py-2 rounded-xl text-sm text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">Live Preview</a>
+          <div class="h-px bg-light-border dark:bg-ink-600/50 my-1"></div>
+          <div class="flex items-center gap-2 pt-1">
+            <a href="./login.html" class="flex-1 btn-secondary text-center py-2 text-xs font-semibold rounded-xl">Log in</a>
+            <a href="./signup.html" class="flex-1 btn-primary text-center py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5">
+              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+              Sign up
+            </a>
+          </div>
+        </div>
       </div>
     </nav>
   </header>
 
   <main class="flex-1">
-    <!-- Hero -->
-    <section class="max-w-6xl mx-auto px-6 pt-20 pb-24">
-      <div class="max-w-2xl animate-fade-up">
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-dendrite mb-4">for engineers who grind DSA</p>
-        <h1 class="font-display text-5xl sm:text-6xl font-semibold tracking-tight leading-[1.05]">
-          Connect Your <span class="text-spark">Brain Neurons</span>.
+    <!-- Hero Section -->
+    <section class="max-w-5xl mx-auto px-6 pt-12 sm:pt-24 pb-16 sm:pb-28 text-center sm:text-left relative">
+      <!-- Glow ambient background spot -->
+      <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-3/4 h-72 bg-gradient-to-r from-dendrite/15 via-spark/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
+
+      <div class="max-w-3xl mx-auto sm:mx-0 animate-fade-up">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-dendrite/10 dark:bg-dendrite/15 border border-dendrite/25 text-dendrite dark:text-dendrite-soft text-xs font-mono font-medium mb-6">
+          <span class="h-2 w-2 rounded-full bg-dendrite animate-pulse"></span>
+          FOR ENGINEERS GRINDING DSA
+        </div>
+
+        <h1 class="font-display text-4xl sm:text-6xl font-bold tracking-tight text-light-ink dark:text-paper leading-[1.08]">
+          Connect Your <br class="hidden sm:inline" />
+          <span class="bg-gradient-to-r from-spark via-amber-500 to-dendrite bg-clip-text text-transparent">Brain Neurons</span>.
         </h1>
-        <p class="mt-6 text-lg text-paper-muted leading-relaxed">
-          You solved it once. That's not the same as knowing it. CYBN schedules your
-          revisions on a proven spaced-repetition curve — Day&nbsp;1, Day&nbsp;3, Day&nbsp;7, Day&nbsp;15 —
-          so the pattern actually sticks before your next interview.
+
+        <p class="mt-6 text-base sm:text-xl text-light-muted dark:text-paper-muted leading-relaxed font-normal max-w-2xl">
+          Solving a problem once isn't mastering it. CYBN coordinates your revisions along a scientifically proven spaced-repetition curve: 
+          <span class="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-ink-800 text-light-ink dark:text-paper font-semibold">+1d &rarr; +3d &rarr; +7d &rarr; +15d</span>.
         </p>
-        <div class="mt-8 flex flex-wrap items-center gap-4">
-          <a href="./signup.html" class="btn-primary text-base px-6 py-3">Start tracking, free</a>
-          <a href="#how-it-works" class="btn-secondary text-base px-6 py-3">See how it works</a>
+
+        <div class="mt-8 flex flex-wrap items-center justify-center sm:justify-start gap-4">
+          <a href="./signup.html" class="btn-primary text-sm sm:text-base px-6 py-3 rounded-xl shadow-glow">
+            Start tracking for free
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+          <a href="#curve" class="btn-secondary text-sm sm:text-base px-5 py-3 rounded-xl">
+            See the revision pathway
+          </a>
+        </div>
+
+        <div class="mt-10 flex items-center justify-center sm:justify-start gap-6 text-xs text-light-dim dark:text-paper-dim font-mono flex-wrap">
+          <span class="flex items-center gap-1.5">
+            <svg class="h-4 w-4 text-mastered" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            No credit card
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="h-4 w-4 text-mastered" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            LeetCode auto-import
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="h-4 w-4 text-mastered" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Zero cramming
+          </span>
         </div>
       </div>
 
-      <!-- Signature element: synapse pathway, literalizing the Day0→Day5 schedule -->
-      <div class="mt-20 card p-8 sm:p-10 overflow-hidden relative" id="hero-pathway">
-        <div class="absolute inset-0 pointer-events-none opacity-40" style="background: radial-gradient(circle at 15% 30%, rgba(139,127,255,0.15), transparent 45%), radial-gradient(circle at 85% 70%, rgba(242,184,75,0.12), transparent 45%);"></div>
-        <p class="relative font-mono text-xs uppercase tracking-widest text-paper-dim mb-8">the revision pathway</p>
-        <div class="relative flex items-center">
-          <div class="synapse-node" data-state="done">D0</div>
-          <div class="synapse-line" data-filled="true"></div>
-          <div class="synapse-node" data-state="done">D1</div>
-          <div class="synapse-line" data-filled="true"></div>
-          <div class="synapse-node" data-state="due">D2</div>
-          <div class="synapse-line" data-filled="false"></div>
-          <div class="synapse-node" data-state="pending">D3</div>
-          <div class="synapse-line" data-filled="false"></div>
-          <div class="synapse-node" data-state="pending">D4</div>
-          <div class="synapse-line" data-filled="false"></div>
-          <div class="synapse-node" data-state="pending">D5</div>
+      <!-- Signature Synapse Interactive Pathway Card -->
+      <div class="mt-16 card p-6 sm:p-8 relative overflow-hidden" id="curve">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-light-dim dark:text-paper-dim mb-1">
+              <span class="h-2 w-2 rounded-full bg-spark"></span>
+              THE REPETITION PATHWAY (DAY 0 &rarr; DAY 5)
+            </div>
+            <h2 class="text-xl font-display font-bold text-light-ink dark:text-paper">How memory consolidation works</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="pill-easy">Active Simulation</span>
+          </div>
         </div>
-        <div class="relative flex items-center mt-3 text-[11px] font-mono text-paper-dim">
-          <span class="w-9 text-center">solved</span>
-          <span class="flex-1 min-w-[16px]"></span>
-          <span class="w-9 text-center">+1d</span>
-          <span class="flex-1 min-w-[16px]"></span>
-          <span class="w-9 text-center">+3d</span>
-          <span class="flex-1 min-w-[16px]"></span>
-          <span class="w-9 text-center">+7d</span>
-          <span class="flex-1 min-w-[16px]"></span>
-          <span class="w-9 text-center">+15d</span>
-          <span class="flex-1 min-w-[16px]"></span>
-          <span class="w-9 text-center">mastered</span>
+
+        <!-- Synapse Nodes Flow -->
+        <div class="relative py-4 overflow-x-auto">
+          <div class="min-w-[560px]">
+            <div class="relative flex items-center justify-between">
+              <div class="synapse-node" data-state="done" title="First Solve (Day 0)">D0</div>
+              <div class="synapse-line" data-filled="true"></div>
+              <div class="synapse-node" data-state="done" title="Revision 1 (+1 Day)">D1</div>
+              <div class="synapse-line" data-filled="true"></div>
+              <div class="synapse-node" data-state="due" title="Revision 2 (+3 Days) — Due Now!">D2</div>
+              <div class="synapse-line" data-filled="false"></div>
+              <div class="synapse-node" data-state="pending" title="Revision 3 (+7 Days)">D3</div>
+              <div class="synapse-line" data-filled="false"></div>
+              <div class="synapse-node" data-state="pending" title="Revision 4 (+15 Days)">D4</div>
+              <div class="synapse-line" data-filled="false"></div>
+              <div class="synapse-node" data-state="pending" title="Day 5 Mastery Confirmation">D5</div>
+            </div>
+            
+            <div class="relative flex items-center justify-between mt-3 text-xs font-mono text-light-muted dark:text-paper-dim">
+              <div class="w-10 text-center font-medium text-mastered">solved</div>
+              <div class="w-10 text-center text-mastered">+1 day</div>
+              <div class="w-10 text-center font-bold text-spark">+3 days</div>
+              <div class="w-10 text-center">+7 days</div>
+              <div class="w-10 text-center">+15 days</div>
+              <div class="w-10 text-center font-medium text-dendrite">mastered</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-5 border-t border-light-border dark:border-ink-600/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-light-muted dark:text-paper-dim">
+          <div class="flex items-center gap-2">
+            <span class="inline-block h-2 w-2 rounded-full bg-spark animate-ping"></span>
+            <span>Day 2 requires active recall today before neural forgetting takes over.</span>
+          </div>
+          <span class="text-light-ink dark:text-paper font-semibold">Ebbinghaus Retention: 85%+</span>
         </div>
       </div>
     </section>
 
-    <!-- About / functionality -->
-    <section id="how-it-works" class="max-w-6xl mx-auto px-6 pb-24 grid sm:grid-cols-2 gap-6">
-      <div class="card p-8">
-        <div class="h-10 w-10 rounded-lg bg-dendrite/15 flex items-center justify-center text-dendrite font-mono font-bold mb-5">01</div>
-        <h2 class="text-xl font-display font-semibold mb-3">Log a problem once</h2>
-        <p class="text-paper-muted leading-relaxed">
-          Solved something new? Add the name, topic, pattern, and complexity in seconds.
-          That's Day 0 — CYBN takes it from there and quietly schedules the four revisions
-          that turn a one-off solve into something you actually own.
-        </p>
+    <!-- Value Proposition / Features Grid -->
+    <section id="how-it-works" class="max-w-5xl mx-auto px-6 py-12">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="font-display text-3xl font-bold text-light-ink dark:text-paper">Built specifically for coding interviews</h2>
+        <p class="mt-3 text-light-muted dark:text-paper-muted text-base">Stop maintaining messy spreadsheets or random bookmarks. Let the algorithm tell you what to code today.</p>
       </div>
-      <div class="card p-8">
-        <div class="h-10 w-10 rounded-lg bg-spark/15 flex items-center justify-center text-spark font-mono font-bold mb-5">02</div>
-        <h2 class="text-xl font-display font-semibold mb-3">Show up when it's due</h2>
-        <p class="text-paper-muted leading-relaxed">
-          Your dashboard surfaces exactly what's due today, and calls out anything you
-          skipped. A consistency graph keeps the streak visible — no cramming, just
-          steady, spaced practice.
-        </p>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Feature 1 -->
+        <div class="card-hover p-6">
+          <div class="h-10 w-10 rounded-xl bg-dendrite/15 text-dendrite flex items-center justify-center font-mono font-bold mb-4">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <h3 class="text-lg font-display font-semibold text-light-ink dark:text-paper mb-2">Automated Intervals</h3>
+          <p class="text-sm text-light-muted dark:text-paper-muted leading-relaxed">
+            Every problem you log automatically schedules Day 1, Day 2, Day 3, and Day 4 follow-ups with zero manual math.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="card-hover p-6">
+          <div class="h-10 w-10 rounded-xl bg-spark/15 text-spark flex items-center justify-center font-mono font-bold mb-4">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <h3 class="text-lg font-display font-semibold text-light-ink dark:text-paper mb-2">1-Click LeetCode Fetch</h3>
+          <p class="text-sm text-light-muted dark:text-paper-muted leading-relaxed">
+            Paste any LeetCode URL to instantly grab the problem title, topic, and difficulty level without typing.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="card-hover p-6">
+          <div class="h-10 w-10 rounded-xl bg-mastered/15 text-mastered flex items-center justify-center font-mono font-bold mb-4">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <h3 class="text-lg font-display font-semibold text-light-ink dark:text-paper mb-2">Streak & Consistency Heatmap</h3>
+          <p class="text-sm text-light-muted dark:text-paper-muted leading-relaxed">
+            Visual GitHub-style 12-week consistency tracking reinforces your habit without punishing honest breaks.
+          </p>
+        </div>
       </div>
     </section>
 
-    <!-- Demo progress bar (pseudo, before login) -->
-    <section class="max-w-6xl mx-auto px-6 pb-28">
-      <div class="card p-8 sm:p-10">
-        <div class="flex items-center justify-between mb-6">
+    <!-- Live Preview Demonstration Box -->
+    <section id="preview" class="max-w-5xl mx-auto px-6 py-14">
+      <div class="card p-6 sm:p-10 relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <p class="font-mono text-xs uppercase tracking-widest text-paper-dim mb-1">preview</p>
-            <h3 class="text-lg font-display font-semibold">What your progress looks like</h3>
+            <span class="text-xs font-mono uppercase tracking-widest text-dendrite font-semibold">PREVIEW DASHBOARD</span>
+            <h3 class="text-2xl font-display font-bold text-light-ink dark:text-paper mt-1">What your mastery board looks like</h3>
           </div>
-          <span class="pill-easy">demo data</span>
+          <span class="pill-easy">Live Preview Stats</span>
         </div>
-        <div class="grid sm:grid-cols-3 gap-6 mb-8">
-          <div>
-            <p class="text-3xl font-display font-semibold text-paper">128</p>
-            <p class="text-sm text-paper-muted mt-1">problems solved</p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-8">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-ink-900/50 border border-light-border dark:border-ink-600/40">
+            <p class="text-xs font-mono text-light-muted dark:text-paper-dim uppercase">Total Logged</p>
+            <p class="text-3xl font-display font-bold text-light-ink dark:text-paper mt-1">128</p>
           </div>
-          <div>
-            <p class="text-3xl font-display font-semibold text-mastered">74</p>
-            <p class="text-sm text-paper-muted mt-1">fully mastered</p>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-ink-900/50 border border-light-border dark:border-ink-600/40">
+            <p class="text-xs font-mono text-light-muted dark:text-paper-dim uppercase">Mastered (D5)</p>
+            <p class="text-3xl font-display font-bold text-mastered mt-1">74</p>
           </div>
-          <div>
-            <p class="text-3xl font-display font-semibold text-spark">6</p>
-            <p class="text-sm text-paper-muted mt-1">due today</p>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-ink-900/50 border border-light-border dark:border-ink-600/40">
+            <p class="text-xs font-mono text-light-muted dark:text-paper-dim uppercase">Due Today</p>
+            <p class="text-3xl font-display font-bold text-spark mt-1">6</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-ink-900/50 border border-light-border dark:border-ink-600/40">
+            <p class="text-xs font-mono text-light-muted dark:text-paper-dim uppercase">Current Streak</p>
+            <p class="text-3xl font-display font-bold text-dendrite mt-1">18 <span class="text-base font-normal">days</span></p>
           </div>
         </div>
-        <div class="h-2.5 w-full rounded-full bg-ink-700 overflow-hidden">
-          <div class="h-full rounded-full bg-gradient-to-r from-dendrite to-spark" style="width: 58%"></div>
+
+        <div class="mb-2 flex items-center justify-between text-xs font-mono text-light-muted dark:text-paper-dim">
+          <span>Overall Pathway Completion</span>
+          <span class="font-bold text-light-ink dark:text-paper">58% Mastered</span>
         </div>
-        <p class="text-xs text-paper-dim mt-2 font-mono">58% of your active problems fully revised</p>
+        <div class="h-3 w-full rounded-full bg-slate-100 dark:bg-ink-700 overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-dendrite via-spark to-mastered transition-all duration-500" style="width: 58%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom CTA Banner -->
+    <section class="max-w-5xl mx-auto px-6 py-16 text-center">
+      <div class="card p-8 sm:p-12 relative overflow-hidden bg-gradient-to-b from-white to-slate-50 dark:from-ink-800 dark:to-ink-900">
+        <h2 class="text-3xl sm:text-4xl font-display font-bold text-light-ink dark:text-paper">Ready to retain every algorithm?</h2>
+        <p class="mt-3 text-light-muted dark:text-paper-muted text-base max-w-xl mx-auto">
+          Join engineers who solve smarter, not harder. Set up your space-repetition dashboard in 30 seconds.
+        </p>
+        <div class="mt-8 flex justify-center gap-4">
+          <a href="./signup.html" class="btn-primary px-8 py-3 text-base rounded-full shadow-glow">
+            Create Free Account
+          </a>
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="border-t border-ink-600/60">
-    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="text-xs text-paper-dim font-mono">© <span id="year"></span> CYBN. All rights reserved.</p>
-      <p class="text-xs text-paper-dim font-mono">-- Build for Engineers, by the engineer.</p>
+  <!-- Modern Minimal Footbar -->
+  <footer class="border-t border-light-border dark:border-ink-600/60 mt-auto bg-white/50 dark:bg-ink-950/50 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 dark:bg-ink-800 border border-spark/30 text-spark">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12L5 6M12 12L19 6M12 12L4 16M12 12L20 16M12 12L12 3" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.7" />
+            <circle cx="12" cy="3" r="1.8" fill="#818CF8" />
+            <circle cx="5" cy="6" r="2" fill="#FBBF24" />
+            <circle cx="19" cy="6" r="2" fill="#818CF8" />
+            <circle cx="4" cy="16" r="1.8" fill="#34D399" />
+            <circle cx="20" cy="16" r="1.8" fill="#FBBF24" />
+            <circle cx="12" cy="12" r="2.8" fill="#F59E0B" />
+          </svg>
+        </div>
+        <div class="text-xs text-light-dim dark:text-paper-dim font-mono">
+          &copy; <span id="year"></span> CYBN. Engineered for memory that lasts.
+        </div>
+      </div>
+
+      <!-- Revision Interval Tag Pill -->
+      <div class="flex items-center gap-2 text-[11px] font-mono text-light-muted dark:text-paper-dim bg-slate-100 dark:bg-ink-800/80 px-3 py-1 rounded-full border border-light-border dark:border-ink-600/40">
+        <span class="text-spark font-semibold">Curve:</span>
+        <span>+1d</span> &rarr;
+        <span>+3d</span> &rarr;
+        <span>+7d</span> &rarr;
+        <span>+15d</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-xs text-light-muted dark:text-paper-dim">
+        <a href="./login.html" class="hover:text-light-ink dark:hover:text-paper transition-colors">Log In</a>
+        <a href="./signup.html" class="hover:text-light-ink dark:hover:text-paper transition-colors">Sign Up</a>
+        <a href="#how-it-works" class="hover:text-light-ink dark:hover:text-paper transition-colors">How it works</a>
+      </div>
     </div>
   </footer>
 
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="./js/theme.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile navigation toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+
+    mobileBtn.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      if (isOpen) {
+        mobileMenu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      } else {
+        mobileMenu.classList.remove('hidden');
+        iconOpen.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+      }
+    });
+
+    // Close mobile menu when clicking internal anchor links
+    mobileMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+      });
+    });
+  </script>
 </body>
 </html>
