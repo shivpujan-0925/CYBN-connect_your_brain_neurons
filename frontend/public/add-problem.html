@@ -203,10 +203,10 @@
         statusEl.className = 'text-xs text-spark mt-2 font-mono';
 
         try {
-          const { problem } = await api.problems.importFromLeetCode(url);
-          if (problem.name) form.name.value = problem.name;
-          if (problem.difficulty) form.difficulty.value = problem.difficulty;
-          if (problem.topic) form.topic.value = problem.topic;
+          const { imported } = await api.problems.importFromLeetCode(url);
+          if (imported.name) form.name.value = imported.name;
+          if (imported.difficulty) form.difficulty.value = imported.difficulty;
+          if (imported.topic) form.topic.value = imported.topic;
           form.link.value = url;
           statusEl.textContent = 'Imported successfully!';
           statusEl.className = 'text-xs text-mastered mt-2 font-mono';
