@@ -159,9 +159,9 @@
     const list = document.getElementById('due-list');
 
     if (due.length === 0) {
-      list.innerHTML = `<div class="card p-8 text-center text-paper-muted">Nothing due today. Add a problem to get your pathway started.</div>`;
+      list.innerHTML = `<div class="card p-8 text-center text-light-muted dark:text-paper-muted text-sm">Nothing due today. Add a problem to get your pathway started.</div>`;
     } else {
-      list.innerHTML = `<div class="card divide-y divide-ink-600/60">${due.map(problemRowHTML).join('')}</div>`;
+      list.innerHTML = `<div class="card divide-y divide-light-border dark:divide-ink-600/60 overflow-hidden shadow-sm">${due.map(problemRowHTML).join('')}</div>`;
       attachDoneHandlers(list);
     }
 
@@ -216,8 +216,8 @@
     mainContent.classList.add('hidden');
     searchResults.classList.remove('hidden');
     searchResultsList.innerHTML = matches.length
-      ? `<div class="card divide-y divide-ink-600/60">${matches.map(problemRowHTML).join('')}</div>`
-      : `<p class="text-paper-muted text-sm">No problems match "${escapeHtml(searchInput.value)}".</p>`;
+      ? `<div class="card divide-y divide-light-border dark:divide-ink-600/60 overflow-hidden shadow-sm">${matches.map(problemRowHTML).join('')}</div>`
+      : `<p class="text-light-muted dark:text-paper-muted text-sm p-4">No problems match "${escapeHtml(searchInput.value)}".</p>`;
     attachDoneHandlers(searchResultsList);
   });
 

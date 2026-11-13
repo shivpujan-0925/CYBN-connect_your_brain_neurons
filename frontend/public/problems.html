@@ -107,24 +107,31 @@
   </header>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-light-ink dark:text-paper">All Tracked Problems</h1>
-        <p class="text-xs sm:text-sm text-light-muted dark:text-paper-muted mt-1">Full spaced-repetition queue and mastery registry</p>
+        <div class="flex items-center gap-3">
+          <h1 class="font-display text-2xl sm:text-3xl font-bold text-light-ink dark:text-paper">All Tracked Problems</h1>
+          <span id="problem-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium text-light-muted dark:text-paper-muted bg-slate-100 dark:bg-ink-800 border border-light-border dark:border-ink-600/50">0</span>
+        </div>
+        <p class="text-xs sm:text-sm text-light-muted dark:text-paper-muted mt-1">Full spaced-repetition queue and memory consolidation registry</p>
       </div>
-      <a href="./add-problem.html" class="btn-primary py-2 px-4 rounded-xl shadow-glow text-xs sm:text-sm">
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-        Add Problem
-      </a>
+
+      <!-- Live Search / Filter Input -->
+      <div class="relative w-full sm:w-64">
+        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-light-dim dark:text-paper-dim">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <input type="text" id="filter-search-input" placeholder="Search by name, topic..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-slate-100/90 dark:bg-ink-900/70 border border-light-border dark:border-ink-600/50 text-light-ink dark:text-paper placeholder:text-light-dim dark:placeholder:text-paper-dim focus:outline-none focus:border-spark focus:ring-1 focus:ring-spark transition-all" />
+      </div>
     </div>
 
-    <!-- Filter Pills Bar -->
-    <div class="flex gap-2 mb-6 overflow-x-auto pb-1" id="filter-tabs">
-      <button class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-spark text-ink-950 transition-all border border-spark shadow-sm" data-filter="">All</button>
-      <button class="btn-secondary !rounded-full !px-3.5 !py-1 text-xs" data-filter="due">Due Today</button>
-      <button class="btn-secondary !rounded-full !px-3.5 !py-1 text-xs" data-filter="overdue">Overdue</button>
-      <button class="btn-secondary !rounded-full !px-3.5 !py-1 text-xs" data-filter="active">Active</button>
-      <button class="btn-secondary !rounded-full !px-3.5 !py-1 text-xs" data-filter="mastered">Mastered</button>
+    <!-- Filter Segmented Tabs Bar -->
+    <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-ink-900/60 border border-light-border dark:border-ink-600/50 w-fit mb-6 overflow-x-auto max-w-full select-none" id="filter-tabs">
+      <button class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-ink-800 text-light-ink dark:text-paper shadow-sm transition-all" data-filter="">All</button>
+      <button class="px-3.5 py-1.5 rounded-lg text-xs font-medium text-light-muted dark:text-paper-muted hover:text-light-ink dark:hover:text-paper transition-all" data-filter="due">Due Today</button>
+      <button class="px-3.5 py-1.5 rounded-lg text-xs font-medium text-light-muted dark:text-paper-muted hover:text-light-ink dark:hover:text-paper transition-all" data-filter="overdue">Overdue</button>
+      <button class="px-3.5 py-1.5 rounded-lg text-xs font-medium text-light-muted dark:text-paper-muted hover:text-light-ink dark:hover:text-paper transition-all" data-filter="active">Active</button>
+      <button class="px-3.5 py-1.5 rounded-lg text-xs font-medium text-light-muted dark:text-paper-muted hover:text-light-ink dark:hover:text-paper transition-all" data-filter="mastered">Mastered</button>
     </div>
 
     <!-- List container -->
@@ -171,26 +178,60 @@
 
       const container = document.getElementById('list-container');
       const tabs = document.querySelectorAll('#filter-tabs button');
+      const countBadge = document.getElementById('problem-count-badge');
+      const searchInput = document.getElementById('filter-search-input');
+
+      let currentFilter = '';
+      let cachedProblems = [];
 
       function setActiveTab(filter) {
+        currentFilter = filter;
         tabs.forEach((t) => {
           const isActive = t.dataset.filter === filter;
           if (isActive) {
-            t.className = 'px-3.5 py-1.5 rounded-full text-xs font-semibold bg-spark text-ink-950 transition-all border border-spark shadow-sm';
+            t.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-ink-800 text-light-ink dark:text-paper shadow-sm transition-all';
           } else {
-            t.className = 'btn-secondary !rounded-full !px-3.5 !py-1 text-xs';
+            t.className = 'px-3.5 py-1.5 rounded-lg text-xs font-medium text-light-muted dark:text-paper-muted hover:text-light-ink dark:hover:text-paper transition-all';
           }
         });
       }
 
+      function renderList(problems) {
+        const query = (searchInput?.value || '').trim().toLowerCase();
+        const filtered = query
+          ? problems.filter((p) => p.name.toLowerCase().includes(query) || (p.topic || '').toLowerCase().includes(query))
+          : problems;
+
+        if (countBadge) {
+          countBadge.textContent = `${filtered.length} problem${filtered.length === 1 ? '' : 's'}`;
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div class="p-12 text-center">
+              <div class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 dark:bg-ink-900/60 text-light-dim dark:text-paper-dim mb-3 border border-light-border dark:border-ink-600/40">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <p class="text-sm font-medium text-light-ink dark:text-paper">No problems match this view</p>
+              <p class="text-xs text-light-muted dark:text-paper-muted mt-1">Try clearing search or switching tabs</p>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = filtered.map(problemRowHTML).join('');
+        attachDoneHandlers();
+      }
+
       async function loadList(filter) {
-        container.innerHTML = `<p class="text-light-dim dark:text-paper-dim text-sm p-6">Loading problems…</p>`;
+        container.innerHTML = `
+          <div class="p-10 text-center text-light-dim dark:text-paper-dim text-xs font-mono flex items-center justify-center gap-2">
+            <svg class="animate-spin h-4 w-4 text-spark" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+            <span>Loading consolidation registry…</span>
+          </div>`;
         try {
           const { problems } = await api.problems.list(filter);
-          container.innerHTML = problems.length
-            ? problems.map(problemRowHTML).join('')
-            : `<div class="p-12 text-center text-light-muted dark:text-paper-dim text-sm">No problems match this filter.</div>`;
-          attachDoneHandlers();
+          cachedProblems = problems || [];
+          renderList(cachedProblems);
         } catch (err) {
           container.innerHTML = `<p class="text-overdue text-sm p-6">${escapeHtml(err.message)}</p>`;
         }
@@ -206,8 +247,7 @@
             try {
               await api.problems.completeStage(id, Number(stage));
               toast('Nice — revision completed!', 'success');
-              const activeTab = document.querySelector('#filter-tabs button.bg-spark');
-              await loadList(activeTab ? activeTab.dataset.filter : '');
+              await loadList(currentFilter);
             } catch (err) {
               toast(err.message, 'error');
               btn.disabled = false;
@@ -223,6 +263,12 @@
           loadList(tab.dataset.filter);
         });
       });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          renderList(cachedProblems);
+        });
+      }
 
       await loadList('');
     })();
