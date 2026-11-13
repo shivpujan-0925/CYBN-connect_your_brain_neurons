@@ -54,23 +54,64 @@
 
   function renderConsistencyGraph(days) {
     const container = document.getElementById('consistency-graph');
+    const monthsContainer = document.getElementById('consistency-months');
+    if (!container) return;
+
     container.innerHTML = '';
+    if (monthsContainer) monthsContainer.innerHTML = '';
+
     // group into weeks (columns of 7), oldest first
     const weeks = [];
     for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
 
-    for (const week of weeks) {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let lastMonth = -1;
+    let totalActivityInYear = 0;
+
+    for (let w = 0; w < weeks.length; w++) {
+      const week = weeks[w];
       const col = document.createElement('div');
-      col.className = 'flex flex-col gap-1';
+      col.className = 'flex flex-col gap-[3px] shrink-0';
+
       for (const day of week) {
+        totalActivityInYear += (day.count || 0);
         const cell = document.createElement('div');
         const level = day.count === 0 ? 0 : day.count === 1 ? 1 : day.count === 2 ? 2 : 3;
-        const colors = ['bg-slate-200 dark:bg-ink-700', 'bg-spark/35', 'bg-spark/70', 'bg-spark'];
-        cell.className = `h-3 w-3 rounded-sm ${colors[level]}`;
-        cell.title = `${day.date}: ${day.count} problem${day.count === 1 ? '' : 's'} solved`;
+        const colors = [
+          'bg-slate-200 dark:bg-ink-700/80',
+          'bg-spark/35 shadow-[0_0_6px_rgba(245,158,11,0.2)]',
+          'bg-spark/70 shadow-[0_0_8px_rgba(245,158,11,0.4)]',
+          'bg-spark shadow-[0_0_10px_rgba(245,158,11,0.6)]'
+        ];
+        cell.className = `h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-[2px] transition-transform hover:scale-125 hover:z-10 ${colors[level]}`;
+        const formattedDate = new Date(day.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        cell.title = `${formattedDate}: ${day.count} activity event${day.count === 1 ? '' : 's'}`;
         col.appendChild(cell);
       }
       container.appendChild(col);
+
+      // Month labels matching each column
+      if (monthsContainer) {
+        const colLabel = document.createElement('div');
+        colLabel.className = 'w-2.5 sm:w-3 shrink-0 text-center overflow-visible relative';
+        if (week[0]) {
+          const m = new Date(week[0].date).getUTCMonth();
+          if (m !== lastMonth) {
+            lastMonth = m;
+            const span = document.createElement('span');
+            span.className = 'absolute left-0 top-0 whitespace-nowrap text-[10px] text-light-dim dark:text-paper-dim font-mono';
+            span.textContent = monthNames[m];
+            colLabel.appendChild(span);
+          }
+        }
+        monthsContainer.appendChild(colLabel);
+      }
+    }
+
+    const summaryEl = document.getElementById('consistency-summary');
+    if (summaryEl) {
+      const activeDays = days.filter((d) => d.count > 0).length;
+      summaryEl.textContent = `${totalActivityInYear} revisions & solves across ${activeDays} active days in the last year`;
     }
   }
 

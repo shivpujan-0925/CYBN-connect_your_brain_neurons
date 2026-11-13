@@ -53,24 +53,28 @@ const getOverview = asyncHandler(async (req, res) => {
   const dueToday = problems.filter((p) => isDueToday(p) && !isOverdue(p));
   const overdue = problems.filter((p) => isOverdue(p));
 
-  // Consistency graph: count of day0 (first-solve) events per calendar day, last 84 days (12 weeks)
-  const since = new Date();
-  since.setUTCDate(since.getUTCDate() - 83);
+  // Consistency graph: full 1-year (52 full weeks = 364 days) of DSA solves & revisions
+  const today = new Date();
+  const daysToShow = 52 * 7; // 364 days (52 full weeks)
+  const since = new Date(today);
+  since.setUTCDate(since.getUTCDate() - (daysToShow - 1));
   since.setUTCHours(0, 0, 0, 0);
 
   const counts = {};
   for (const p of problems) {
-    if (!p.day0_completed_at) continue;
-    const solvedAt = new Date(p.day0_completed_at);
-    if (solvedAt >= since) {
-      const day = solvedAt.toISOString().slice(0, 10);
-      counts[day] = (counts[day] || 0) + 1;
+    for (let stage = 0; stage <= 5; stage++) {
+      const ts = stage === 0 ? p.day0_completed_at : p[`day${stage}_completed_at`];
+      if (!ts) continue;
+      const completedAt = new Date(ts);
+      if (completedAt >= since) {
+        const day = completedAt.toISOString().slice(0, 10);
+        counts[day] = (counts[day] || 0) + 1;
+      }
     }
   }
 
   const consistency = [];
   const cursor = new Date(since);
-  const today = new Date();
   while (cursor <= today) {
     const key = cursor.toISOString().slice(0, 10);
     consistency.push({ date: key, count: counts[key] || 0 });

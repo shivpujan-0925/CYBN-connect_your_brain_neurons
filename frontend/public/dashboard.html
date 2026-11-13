@@ -171,20 +171,32 @@
           </div>
           <p id="progress-bar-label" class="text-xs text-light-dim dark:text-paper-dim font-mono mb-6">—</p>
 
-          <!-- 12-Week Consistency Matrix -->
-          <div class="pt-4 border-t border-light-border dark:border-ink-600/60">
-            <div class="flex items-center justify-between mb-2">
-              <p class="font-mono text-xs uppercase tracking-widest text-light-dim dark:text-paper-dim">12-WEEK CONSISTENCY</p>
+          <!-- 1-Year Consistency Board -->
+          <div class="pt-5 border-t border-light-border dark:border-ink-600/60">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div>
+                <p class="font-mono text-xs uppercase tracking-widest text-light-dim dark:text-paper-dim">1-YEAR REVISION CONSISTENCY</p>
+                <p id="consistency-summary" class="text-[11px] text-light-muted dark:text-paper-muted mt-0.5">365-day neural consolidation heatmap</p>
+              </div>
               <div class="flex items-center gap-1.5 text-[10px] font-mono text-light-dim dark:text-paper-dim">
                 <span>Less</span>
-                <span class="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-ink-700"></span>
-                <span class="h-2.5 w-2.5 rounded-sm bg-spark/30"></span>
-                <span class="h-2.5 w-2.5 rounded-sm bg-spark/65"></span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-ink-700/80"></span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-spark/35"></span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-spark/70"></span>
                 <span class="h-2.5 w-2.5 rounded-sm bg-spark"></span>
                 <span>More</span>
               </div>
             </div>
-            <div id="consistency-graph" class="flex gap-1 overflow-x-auto pb-1"></div>
+
+            <!-- Heatmap Board Container with horizontal scroll and month labels -->
+            <div class="overflow-x-auto pb-2 -mx-1 px-1">
+              <div class="min-w-[700px] flex flex-col gap-1">
+                <!-- Month Labels Row -->
+                <div id="consistency-months" class="flex text-[10px] font-mono text-light-dim dark:text-paper-dim h-4 select-none"></div>
+                <!-- 52-Week Grid -->
+                <div id="consistency-graph" class="flex gap-[3px]"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
