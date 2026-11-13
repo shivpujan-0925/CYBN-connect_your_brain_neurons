@@ -6,14 +6,14 @@ const problemSchema = new mongoose.Schema(
     _id: { type: String, default: () => nanoid() },
     user_id: { type: String, required: true, ref: 'User', index: true },
 
-    name: { type: String, required: true, trim: true },
-    topic: { type: String, default: null },
-    pattern: { type: String, default: null },
-    time_complexity: { type: String, default: null },
-    space_complexity: { type: String, default: null },
+    name: { type: String, required: true, trim: true, maxlength: 200 },
+    topic: { type: String, default: null, maxlength: 100 },
+    pattern: { type: String, default: null, maxlength: 100 },
+    time_complexity: { type: String, default: null, maxlength: 50 },
+    space_complexity: { type: String, default: null, maxlength: 50 },
     difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'], default: 'Medium' },
-    notes: { type: String, default: null },
-    link: { type: String, default: null },
+    notes: { type: String, default: null, maxlength: 10000 },
+    link: { type: String, default: null, maxlength: 1000 },
 
     current_stage: { type: Number, default: 0 }, // 0..5, which day the problem is currently on
     status: { type: String, enum: ['active', 'mastered'], default: 'active' },

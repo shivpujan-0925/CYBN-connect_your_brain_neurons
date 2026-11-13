@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       match: /^[a-zA-Z0-9_]{3,20}$/,
     },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 254 },
     password_hash: { type: String, required: true },
     avatar_url: { type: String, default: null },
     avatar_public_id: { type: String, default: null }, // Cloudinary public_id, to replace/delete old uploads

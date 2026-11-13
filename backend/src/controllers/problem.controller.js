@@ -28,7 +28,8 @@ async function getOwnedProblem(userId, problemId) {
 /** Pulls the "titleSlug" out of any LeetCode problem URL shape, e.g.
  *  https://leetcode.com/problems/two-sum/  or  .../two-sum/description/  -> "two-sum" */
 function extractLeetCodeSlug(url) {
-  const match = String(url).match(/leetcode\.com\/problems\/([a-z0-9-]+)/i);
+  if (!url || typeof url !== 'string') return null;
+  const match = url.trim().match(/^(?:https?:\/\/)?(?:www\.)?leetcode\.com\/problems\/([a-z0-9-]+)/i);
   return match ? match[1] : null;
 }
 

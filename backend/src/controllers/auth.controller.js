@@ -29,23 +29,27 @@ function cookieOptions() {
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (!username || !email || !password) {
+  if (!username || !email || !password || typeof username !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
     throw new ApiError(400, 'Username, email, and password are all required.');
   }
   if (password.length < 8) {
     throw new ApiError(400, 'Password must be at least 8 characters.');
   }
+  if (password.length > 128) {
+    throw new ApiError(400, 'Password cannot exceed 128 characters.');
+  }
   if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
     throw new ApiError(400, 'Username must be 3-20 characters: letters, numbers, underscore only.');
   }
 
-  const existing = await User.findOne({ $or: [{ email }, { username }] }).lean();
+  const cleanEmail = email.toLowerCase().trim();
+  const existing = await User.findOne({ $or: [{ email: cleanEmail }, { username }] }).lean();
   if (existing) {
     throw new ApiError(409, 'An account with that email or username already exists.');
   }
 
   const password_hash = await bcrypt.hash(password, 10);
-  const user = await User.create({ username, email, password_hash });
+  const user = await User.create({ username, email: cleanEmail, password_hash });
 
   const token = signToken({ sub: user._id });
   res.cookie(process.env.COOKIE_NAME || 'cybn_token', token, cookieOptions());
@@ -54,12 +58,13 @@ const signup = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const { emailOrUsername, password } = req.body;
-  if (!emailOrUsername || !password) {
+  if (!emailOrUsername || !password || typeof emailOrUsername !== 'string' || typeof password !== 'string') {
     throw new ApiError(400, 'Email/username and password are required.');
   }
 
+  const cleanQuery = emailOrUsername.trim();
   const user = await User.findOne({
-    $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+    $or: [{ email: cleanQuery.toLowerCase() }, { username: cleanQuery }],
   });
 
   if (!user || !(await bcrypt.compare(password, user.password_hash))) {
@@ -86,14 +91,15 @@ const me = asyncHandler(async (req, res) => {
  *  have accounts. */
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  if (!email) throw new ApiError(400, 'Email is required.');
+  if (!email || typeof email !== 'string') throw new ApiError(400, 'Email is required.');
 
   const genericResponse = {
     ok: true,
     message: 'If an account with that email exists, a reset link has been sent.',
   };
 
-  const user = await User.findOne({ email: String(email).toLowerCase().trim() });
+  const cleanEmail = email.toLowerCase().trim();
+  const user = await User.findOne({ email: cleanEmail });
   if (!user) {
     return res.json(genericResponse);
   }
@@ -125,8 +131,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
 /** POST /api/auth/reset-password — body: { token, password } */
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, password } = req.body;
-  if (!token || !password) throw new ApiError(400, 'Reset token and new password are required.');
+  if (!token || !password || typeof token !== 'string' || typeof password !== 'string') {
+    throw new ApiError(400, 'Reset token and new password are required.');
+  }
   if (password.length < 8) throw new ApiError(400, 'Password must be at least 8 characters.');
+  if (password.length > 128) throw new ApiError(400, 'Password cannot exceed 128 characters.');
 
   const user = await User.findOne({
     reset_password_token: hashResetToken(token),

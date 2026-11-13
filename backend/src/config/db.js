@@ -12,6 +12,9 @@ async function connectDB() {
     );
   }
 
+  // Security: sanitize query selectors globally to prevent NoSQL injection
+  mongoose.set('sanitizeFilter', true);
+
   await mongoose.connect(uri);
   connected = true;
   console.log('Connected to MongoDB');

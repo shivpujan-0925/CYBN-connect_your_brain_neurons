@@ -5,9 +5,10 @@
   "scripts": {
     "build": "tailwindcss -i ./src/input.css -o ./public/css/output.css --minify",
     "watch": "tailwindcss -i ./src/input.css -o ./public/css/output.css --watch",
-    "serve": "npx --yes http-server ./public -p 3000 -c-1"
+    "serve": "npx --yes http-server ./public -p 3000 -c-1",
+    "test": "node tests/frontend.test.js"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.13"
+    "tailwindcss": "^3.4.19"
   }
 }
