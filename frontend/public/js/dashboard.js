@@ -65,7 +65,7 @@
       for (const day of week) {
         const cell = document.createElement('div');
         const level = day.count === 0 ? 0 : day.count === 1 ? 1 : day.count === 2 ? 2 : 3;
-        const colors = ['bg-ink-700', 'bg-spark/30', 'bg-spark/65', 'bg-spark'];
+        const colors = ['bg-slate-200 dark:bg-ink-700', 'bg-spark/35', 'bg-spark/70', 'bg-spark'];
         cell.className = `h-3 w-3 rounded-sm ${colors[level]}`;
         cell.title = `${day.date}: ${day.count} problem${day.count === 1 ? '' : 's'} solved`;
         col.appendChild(cell);

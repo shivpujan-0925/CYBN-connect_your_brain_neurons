@@ -64,6 +64,62 @@
 
     renderStepper();
     renderNextAction();
+    updateRecallUI();
+  }
+
+  function triggerMasteryConfetti() {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'fixed inset-0 pointer-events-none z-50';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const colors = ['#F59E0B', '#FBBF24', '#6366F1', '#818CF8', '#10B981', '#34D399'];
+    for (let i = 0; i < 90; i++) {
+      particles.push({
+        x: canvas.width / 2,
+        y: canvas.height * 0.45,
+        vx: (Math.random() - 0.5) * 16,
+        vy: (Math.random() - 0.7) * 16,
+        size: Math.random() * 6 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1,
+        rotation: Math.random() * 360,
+        vRotation: (Math.random() - 0.5) * 10,
+      });
+    }
+
+    let start = null;
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      const progress = (timestamp - start) / 2400;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35;
+        p.rotation += p.vRotation;
+        p.alpha = Math.max(0, 1 - progress);
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+        ctx.restore();
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        canvas.remove();
+      }
+    }
+    requestAnimationFrame(step);
   }
 
   function nodeState(stageIndex) {
@@ -133,7 +189,12 @@
       completeBtn.textContent = 'Saving…';
       try {
         ({ problem } = await api.problems.completeStage(problem.id, nextStage));
-        toast('Revision logged.', 'success');
+        if (nextStage === 5) {
+          triggerMasteryConfetti();
+          toast('🎉 Synaptic pathway fully mastered!', 'success');
+        } else {
+          toast('Revision logged.', 'success');
+        }
         render();
       } catch (err) {
         toast(err.message, 'error');
@@ -141,6 +202,142 @@
       }
     };
   }
+
+  // --- Active Recall & Stopwatch Controller ---
+  let isRecallActive = problem.status !== 'mastered';
+  let isRevealed = false;
+
+  function updateRecallUI() {
+    const curtain = q('#recall-curtain');
+    const content = q('#recall-content');
+    const toggleBtn = q('#active-recall-toggle-btn');
+    const dot = q('#active-recall-dot');
+    const text = q('#active-recall-toggle-text');
+
+    if (!curtain || !content) return;
+
+    if (!isRecallActive) {
+      curtain.classList.add('hidden');
+      content.classList.remove('hidden');
+      toggleBtn.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-light-border dark:border-ink-600 bg-slate-100 dark:bg-ink-800 text-light-muted dark:text-paper-muted transition-all';
+      dot.className = 'h-2 w-2 rounded-full bg-slate-400';
+      text.textContent = 'Recall Mode: OFF';
+    } else {
+      toggleBtn.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-spark/40 bg-spark/10 text-spark transition-all';
+      dot.className = 'h-2 w-2 rounded-full bg-spark animate-pulse';
+      text.textContent = 'Recall Mode: ON';
+
+      if (isRevealed) {
+        curtain.classList.add('hidden');
+        content.classList.remove('hidden');
+      } else {
+        curtain.classList.remove('hidden');
+        content.classList.add('hidden');
+      }
+    }
+  }
+
+  q('#active-recall-toggle-btn').addEventListener('click', () => {
+    isRecallActive = !isRecallActive;
+    isRevealed = false;
+    updateRecallUI();
+  });
+
+  q('#recall-reveal-btn').addEventListener('click', () => {
+    isRevealed = true;
+    updateRecallUI();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && isRecallActive && !isRevealed) {
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (activeTag !== 'input' && activeTag !== 'textarea') {
+        e.preventDefault();
+        isRevealed = true;
+        updateRecallUI();
+      }
+    }
+  });
+
+  // Confidence Rating Buttons
+  q('#rate-struggled-btn').addEventListener('click', async () => {
+    const confirmed = await showConfirmModal({
+      title: 'Reset schedule to Day 0?',
+      message: 'Since you struggled to recall this problem, resetting to Day 0 will help consolidate the neural pathway from the beginning.',
+      confirmText: 'Reset to Day 0',
+      danger: true,
+    });
+    if (!confirmed) return;
+    try {
+      ({ problem } = await api.problems.restart(problem.id));
+      toast('Reset to Day 0. Fresh revision begins tomorrow.', 'default');
+      isRevealed = false;
+      render();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+
+  q('#rate-nailed-btn').addEventListener('click', async () => {
+    if (problem.status === 'mastered') {
+      toast('Problem is already mastered.', 'default');
+      return;
+    }
+    const nextStage = problem.current_stage + 1;
+    try {
+      ({ problem } = await api.problems.completeStage(problem.id, nextStage));
+      if (nextStage === 5) {
+        triggerMasteryConfetti();
+        toast('🎉 Synaptic pathway fully mastered!', 'success');
+      } else {
+        toast(`Day ${nextStage} revision logged successfully.`, 'success');
+      }
+      isRevealed = false;
+      render();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+
+  // Stopwatch Controller
+  let timerInterval = null;
+  let timerSeconds = 0;
+  const stopwatchEl = q('#recall-stopwatch');
+  const toggleTimerBtn = q('#stopwatch-toggle');
+  const resetTimerBtn = q('#stopwatch-reset');
+
+  function formatTimer(sec) {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  toggleTimerBtn.addEventListener('click', () => {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      toggleTimerBtn.textContent = 'Start';
+      toggleTimerBtn.className = 'hover:text-spark ml-1 font-sans text-[11px] font-semibold text-spark';
+    } else {
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        stopwatchEl.textContent = formatTimer(timerSeconds);
+      }, 1000);
+      toggleTimerBtn.textContent = 'Pause';
+      toggleTimerBtn.className = 'hover:text-spark ml-1 font-sans text-[11px] font-semibold text-rose-500';
+    }
+  });
+
+  resetTimerBtn.addEventListener('click', () => {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    timerSeconds = 0;
+    stopwatchEl.textContent = '00:00';
+    toggleTimerBtn.textContent = 'Start';
+    toggleTimerBtn.className = 'hover:text-spark ml-1 font-sans text-[11px] font-semibold';
+  });
 
   // --- Edit toggle ---
   const viewMode = q('.js-view-mode');

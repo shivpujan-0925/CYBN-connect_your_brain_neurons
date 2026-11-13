@@ -22,6 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="./assets/cybn-minimal.svg" />
   <link rel="stylesheet" href="./css/output.css" />
 </head>
 <body class="min-h-screen flex flex-col selection:bg-spark/20 selection:text-spark-dim dark:selection:text-spark-soft">
@@ -29,28 +30,20 @@
   <!-- Floating Pill-box Navbar with Mobile Drawer/Menu -->
   <header class="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 w-full max-w-5xl mx-auto">
     <nav class="pill-navbar backdrop-blur-xl relative">
-      <!-- Logo: Production-grade Static Interconnected Brain Neurons -->
+      <!-- Logo: Minimal & Authentic Synaptic Arc Mark -->
       <a href="./index.html" class="flex items-center gap-2.5 group shrink-0">
         <div class="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-slate-900 to-slate-950 dark:from-ink-800 dark:to-ink-950 border border-spark/40 shadow-sm group-hover:border-spark transition-colors duration-200">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Synaptic Connecting Pathways -->
-            <path d="M12 12L5 6M12 12L19 6M12 12L4 16M12 12L20 16M12 12L12 3M5 6L12 3M19 6L12 3" stroke="#F59E0B" stroke-width="1.25" stroke-linecap="round" stroke-opacity="0.65" />
-            <path d="M5 6L4 16M19 6L20 16" stroke="#818CF8" stroke-width="1" stroke-dasharray="1.5 1.5" stroke-opacity="0.6" />
-            
-            <!-- Dendrite Peripheral Neurons -->
-            <circle cx="12" cy="3" r="1.6" fill="#818CF8" />
-            <circle cx="5" cy="6" r="1.8" fill="#FBBF24" />
-            <circle cx="19" cy="6" r="1.8" fill="#818CF8" />
-            <circle cx="4" cy="16" r="1.6" fill="#34D399" />
-            <circle cx="20" cy="16" r="1.6" fill="#FBBF24" />
-            
-            <!-- Central Active Neuron Soma -->
-            <circle cx="12" cy="12" r="2.8" fill="#F59E0B" />
-            <circle cx="12" cy="12" r="4.2" stroke="#F59E0B" stroke-width="0.75" stroke-opacity="0.4" />
+          <svg class="h-5 w-5" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 28 11 A 13 13 0 1 0 28 29" stroke="#6366F1" stroke-width="3.2" stroke-linecap="round" />
+            <path d="M 28 11 L 20 20" stroke="#F59E0B" stroke-width="2.6" stroke-linecap="round" />
+            <circle cx="28" cy="29" r="3" fill="#6366F1" />
+            <circle cx="20" cy="20" r="4.2" fill="#F59E0B" />
+            <circle cx="20" cy="20" r="1.6" fill="#FFFFFF" />
+            <circle cx="28" cy="11" r="2.8" fill="#FBBF24" />
           </svg>
         </div>
         <div class="flex flex-col">
-          <span class="font-display font-bold text-base tracking-tight leading-none text-light-ink dark:text-paper group-hover:text-spark transition-colors">CYBN</span>
+          <span class="font-display font-bold text-base tracking-tight leading-none text-light-ink dark:text-paper group-hover:text-spark transition-colors">CY<span class="text-spark">B</span>N</span>
           <span class="text-[9px] font-mono text-light-muted dark:text-paper-dim tracking-wider uppercase">synapse tracker</span>
         </div>
       </a>
