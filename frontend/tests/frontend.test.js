@@ -28,6 +28,7 @@ describe('Frontend Integrity & Syntax Tests', () => {
     'dashboard.js',
     'palette.js',
     'theme.js',
+    'pwa.js',
   ];
 
   describe('HTML Document Validity', () => {
@@ -65,4 +66,57 @@ describe('Frontend Integrity & Syntax Tests', () => {
       assert.ok(css.includes('font-sans') || css.includes('font-mono') || css.includes('flex'), 'output.css must contain Tailwind utilities');
     });
   });
+
+  describe('Progressive Web App (PWA) Standards', () => {
+    it('validates manifest.json exists, parses, and contains required PWA fields', () => {
+      const manifestPath = path.join(publicDir, 'manifest.json');
+      assert.ok(fs.existsSync(manifestPath), 'manifest.json must exist');
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+
+      assert.equal(manifest.name, 'CYBN — Connect Your Brain Neurons');
+      assert.equal(manifest.short_name, 'CYBN');
+      assert.equal(manifest.display, 'standalone');
+      assert.equal(manifest.theme_color, '#070913');
+      assert.ok(Array.isArray(manifest.icons) && manifest.icons.length >= 3, 'Must have at least 3 icons');
+      assert.ok(Array.isArray(manifest.shortcuts), 'Must have shortcut actions');
+    });
+
+    it('verifies Service Worker sw.js syntax and precache list', () => {
+      const swPath = path.join(publicDir, 'sw.js');
+      assert.ok(fs.existsSync(swPath), 'sw.js must exist');
+      assert.doesNotThrow(() => {
+        execSync(`node --check "${swPath}"`, { stdio: 'pipe' });
+      }, 'Syntax check failed for sw.js');
+
+      const swContent = fs.readFileSync(swPath, 'utf8');
+      assert.ok(swContent.includes('CACHE_NAME'), 'sw.js must define CACHE_NAME');
+      assert.ok(swContent.includes('STATIC_ASSETS'), 'sw.js must define precache assets');
+    });
+
+    it('verifies generated PWA PNG icons exist and are non-empty', () => {
+      const icons = [
+        'icon-192.png',
+        'icon-512.png',
+        'icon-maskable-192.png',
+        'icon-maskable-512.png',
+      ];
+      for (const icon of icons) {
+        const iconPath = path.join(publicDir, 'assets', icon);
+        assert.ok(fs.existsSync(iconPath), `${icon} should exist in assets`);
+        const stat = fs.statSync(iconPath);
+        assert.ok(stat.size > 1000, `${icon} must be > 1KB`);
+      }
+    });
+
+    it('verifies all 10 HTML pages link to manifest and pwa.js', () => {
+      for (const file of requiredHtmlFiles) {
+        const filePath = path.join(publicDir, file);
+        const content = fs.readFileSync(filePath, 'utf8');
+        assert.ok(content.includes('rel="manifest"'), `${file} must link manifest.json`);
+        assert.ok(content.includes('pwa.js'), `${file} must load pwa.js`);
+        assert.ok(content.includes('js-pwa-install-btn'), `${file} must contain PWA install button`);
+      }
+    });
+  });
 });
+

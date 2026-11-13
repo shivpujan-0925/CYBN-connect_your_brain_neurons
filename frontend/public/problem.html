@@ -25,6 +25,13 @@
     rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="./assets/cybn-minimal.svg" />
   <link rel="stylesheet" href="./css/output.css" />
+  <!-- Progressive Web App -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#070913" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CYBN" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -53,6 +60,10 @@
         <a href="./problems.html" class="nav-pill-link text-xs sm:text-sm hidden sm:inline-block">All Problems</a>
         <a href="./stats.html" class="nav-pill-link text-xs sm:text-sm hidden sm:inline-block">Stats</a>
 
+                <!-- Minimal PWA Install Button -->
+        <button type="button" class="hidden js-pwa-install-btn h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 text-light-dim dark:text-paper-dim hover:text-spark dark:hover:text-spark-soft transition-colors shadow-sm" title="Install CYBN App" aria-label="Install CYBN App">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        </button>
         <button type="button" class="js-theme-toggle h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" title="Toggle theme">
           <span class="js-theme-icon"></span>
         </button>
@@ -273,6 +284,7 @@
   <script src="./js/api.js"></script>
   <script src="./js/palette.js"></script>
   <script src="./js/problem.js"></script>
+  <script src="./js/pwa.js"></script>
 </body>
 
 </html>

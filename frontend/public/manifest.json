@@ -1,0 +1,74 @@
+{
+  "name": "CYBN — Connect Your Brain Neurons",
+  "short_name": "CYBN",
+  "description": "DSA spaced-repetition and neural memory consolidation tracker for engineers.",
+  "start_url": "./dashboard.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070913",
+  "theme_color": "#070913",
+  "orientation": "any",
+  "categories": ["education", "productivity", "developer tools"],
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/cybn-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "./dashboard.html",
+      "description": "View real-time DSA consolidation pathway and due revisions",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Add Solved Problem",
+      "short_name": "Add Problem",
+      "url": "./add-problem.html",
+      "description": "Log a newly solved problem with Day 0 spaced repetition",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "All Problems",
+      "short_name": "Problems",
+      "url": "./problems.html",
+      "description": "All tracked problems and memory consolidation registry",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stats & Analytics",
+      "short_name": "Stats",
+      "url": "./stats.html",
+      "description": "Topic, difficulty, and weekly consistency metrics",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
