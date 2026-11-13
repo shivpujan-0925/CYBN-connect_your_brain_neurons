@@ -205,13 +205,15 @@ function problemRowHTML(problem) {
         : 'text-light-dim dark:text-paper-dim';
 
   return `
-    <div class="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-slate-50 dark:hover:bg-ink-700/40 transition-colors" data-problem-id="${problem.id}">
-      <a href="./problem.html?id=${problem.id}" class="min-w-0 flex-1 flex items-center gap-3">
-        <span class="${DIFFICULTY_PILL[problem.difficulty] || 'pill-medium'} shrink-0">${problem.difficulty || 'Medium'}</span>
-        <span class="truncate font-medium text-light-ink dark:text-paper hover:text-spark dark:hover:text-spark-soft transition-colors">${escapeHtml(problem.name)}</span>
+    <div class="flex items-center justify-between gap-2.5 sm:gap-4 px-3.5 sm:px-6 py-3 sm:py-4 hover:bg-slate-50 dark:hover:bg-ink-700/40 transition-colors" data-problem-id="${problem.id}">
+      <a href="./problem.html?id=${problem.id}" class="min-w-0 flex-1 flex items-center gap-2 sm:gap-3">
+        <span class="${DIFFICULTY_PILL[problem.difficulty] || 'pill-medium'} shrink-0 text-[10px] sm:text-xs px-2 py-0.5">${problem.difficulty || 'Medium'}</span>
+        <span class="truncate text-xs sm:text-sm font-medium text-light-ink dark:text-paper hover:text-spark dark:hover:text-spark-soft transition-colors">${escapeHtml(problem.name)}</span>
       </a>
-      <span class="text-xs font-mono shrink-0 ${stateClass}">${stageLabel}</span>
-      ${!isMastered ? `<button class="btn-secondary shrink-0 !py-1 !px-3 text-xs js-done-btn rounded-lg" data-id="${problem.id}" data-stage="${nextStage}">Done</button>` : `<span class="pill bg-mastered/10 text-mastered shrink-0 border border-mastered/20">✓ Done</span>`}
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <span class="text-[11px] sm:text-xs font-mono ${stateClass} whitespace-nowrap">${stageLabel}</span>
+        ${!isMastered ? `<button class="btn-secondary shrink-0 !py-1 !px-2.5 sm:!px-3 text-[11px] sm:text-xs js-done-btn rounded-lg" data-id="${problem.id}" data-stage="${nextStage}">Done</button>` : `<span class="pill bg-mastered/10 text-mastered shrink-0 border border-mastered/20 text-[10px] sm:text-xs">✓ Done</span>`}
+      </div>
     </div>`;
 }
 

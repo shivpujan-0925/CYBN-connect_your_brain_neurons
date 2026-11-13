@@ -23,7 +23,7 @@
   <link rel="icon" type="image/svg+xml" href="./assets/cybn-minimal.svg" />
   <link rel="stylesheet" href="./css/output.css" />
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col overflow-x-hidden">
 
   <!-- Floating Pill Navbar with Mobile Menu -->
   <header class="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto">
@@ -70,7 +70,7 @@
       <!-- Right: Streak, Theme Toggle, Actions -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         <!-- Streak Badge -->
-        <div id="streak-badge" class="hidden items-center gap-1.5 rounded-full bg-spark/10 border border-spark/30 px-2.5 py-1 text-xs font-mono font-bold text-spark dark:text-spark-soft">
+        <div id="streak-badge" class="hidden items-center gap-1.5 rounded-full bg-spark/10 border border-spark/30 px-2 sm:px-2.5 py-1 text-xs font-mono font-bold text-spark dark:text-spark-soft">
           <span>🔥</span><span id="streak-count">0</span>
         </div>
 
@@ -84,15 +84,15 @@
           <span class="js-theme-icon"></span>
         </button>
 
-        <!-- Divider -->
-        <div class="hidden sm:block h-4 w-px bg-light-border dark:bg-ink-600/60"></div>
+        <!-- Desktop Divider -->
+        <div class="hidden lg:block h-4 w-px bg-light-border dark:bg-ink-600/60"></div>
 
-        <!-- Log out (Desktop) -->
-        <button id="logout-btn" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-light-muted dark:text-paper-dim hover:text-overdue hover:bg-overdue/10 transition-colors" title="Sign out">
+        <!-- Log out (Desktop only - on mobile/tablet it is in the hamburger menu) -->
+        <button id="logout-btn" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-light-muted dark:text-paper-dim hover:text-overdue hover:bg-overdue/10 transition-colors" title="Sign out">
           Log out
         </button>
 
-        <!-- Mobile Menu Toggle -->
+        <!-- Mobile Menu Toggle (visible on screens < 1024px) -->
         <button type="button" id="mobile-menu-btn" class="lg:hidden h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" aria-label="Toggle mobile menu">
           <svg id="menu-icon-open" class="h-4 w-4 text-light-ink dark:text-paper" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -119,7 +119,7 @@
     </nav>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
     <!-- Search results (hidden until searched) -->
     <div id="search-results" class="hidden mb-8">
       <div class="flex items-center justify-between mb-3">
@@ -131,67 +131,105 @@
 
     <div id="main-content">
       <!-- Profile & Pathway Row -->
-      <div class="grid lg:grid-cols-[280px_1fr] xl:grid-cols-[300px_1fr] gap-6 mb-8 items-start">
+      <div class="grid lg:grid-cols-[280px_1fr] xl:grid-cols-[300px_1fr] gap-4 sm:gap-6 mb-8 items-start">
         <!-- User Profile Card -->
-        <div class="card p-4 sm:p-5 self-start">
-          <div class="flex items-center gap-3.5">
-            <div class="relative shrink-0">
-              <img id="avatar-img" src="" alt="Profile" class="h-12 w-12 rounded-xl object-cover border border-light-border dark:border-ink-600 shadow-sm" />
-              <button id="avatar-edit-btn" title="Change photo" class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-spark text-ink-950 flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
-                <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 112.828 2.828L11.828 13.828 8 15l1.172-3.828z"/></svg>
-              </button>
-              <button id="avatar-remove-btn" title="Remove photo (reset to default)" class="hidden absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-ink-800 hover:bg-overdue text-paper-muted hover:text-white border border-light-border dark:border-ink-600 flex items-center justify-center shadow-sm hover:scale-110 transition-all" aria-label="Remove profile photo">
-                <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-              </button>
-              <input id="avatar-input" type="file" accept="image/*" class="hidden" />
-            </div>
-            <div class="min-w-0 flex-1">
-              <p id="profile-username" class="font-display font-bold text-base truncate text-light-ink dark:text-paper leading-tight">—</p>
-              <div class="flex items-center gap-1.5 mt-1">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-mastered/10 text-mastered border border-mastered/20">
-                  <span class="h-1.5 w-1.5 rounded-full bg-mastered"></span>
-                  Active Learner
-                </span>
+        <div class="card p-4 sm:p-5 self-start w-full">
+          <div class="flex flex-col sm:flex-row lg:flex-col sm:items-center lg:items-stretch justify-between gap-3 sm:gap-4">
+            <div class="flex items-center gap-3.5">
+              <div class="relative shrink-0">
+                <img id="avatar-img" src="" alt="Profile" class="h-12 w-12 rounded-xl object-cover border border-light-border dark:border-ink-600 shadow-sm" />
+                <button id="avatar-edit-btn" title="Change photo" class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-spark text-ink-950 flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
+                  <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 112.828 2.828L11.828 13.828 8 15l1.172-3.828z"/></svg>
+                </button>
+                <button id="avatar-remove-btn" title="Remove photo (reset to default)" class="hidden absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-ink-800 hover:bg-overdue text-paper-muted hover:text-white border border-light-border dark:border-ink-600 flex items-center justify-center shadow-sm hover:scale-110 transition-all" aria-label="Remove profile photo">
+                  <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <input id="avatar-input" type="file" accept="image/*" class="hidden" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <p id="profile-username" class="font-display font-bold text-base truncate text-light-ink dark:text-paper leading-tight">—</p>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-mastered/10 text-mastered border border-mastered/20">
+                    <span class="h-1.5 w-1.5 rounded-full bg-mastered"></span>
+                    Active Learner
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="mt-3.5 pt-3 border-t border-light-border dark:border-ink-600/60">
-            <a href="./add-problem.html" class="group flex items-center justify-center gap-1.5 w-full py-2 px-3 text-xs font-mono font-medium rounded-lg border border-spark/35 hover:border-spark bg-spark/5 hover:bg-spark/15 dark:bg-spark/10 dark:hover:bg-spark/20 text-spark-dim dark:text-spark transition-all duration-150">
-              <svg class="h-3.5 w-3.5 transition-transform duration-150 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-              <span>Add Solved Problem</span>
-            </a>
+            <div class="pt-3 sm:pt-0 lg:pt-3 border-t sm:border-t-0 lg:border-t border-light-border dark:border-ink-600/60 shrink-0">
+              <a href="./add-problem.html" class="group flex items-center justify-center gap-1.5 w-full sm:w-auto lg:w-full py-2 px-3.5 text-xs font-mono font-medium rounded-lg border border-spark/35 hover:border-spark bg-spark/5 hover:bg-spark/15 dark:bg-spark/10 dark:hover:bg-spark/20 text-spark-dim dark:text-spark transition-all duration-150 whitespace-nowrap">
+                <svg class="h-3.5 w-3.5 transition-transform duration-150 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                <span>Add Solved Problem</span>
+              </a>
+            </div>
           </div>
         </div>
 
         <!-- DSA Pathway & Consistency Progress -->
-        <div class="card p-6 sm:p-8">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <p class="font-mono text-xs uppercase tracking-widest text-light-dim dark:text-paper-dim mb-1">REAL-TIME CONSOLIDATION</p>
-              <h2 class="text-xl font-display font-bold text-light-ink dark:text-paper">Your DSA Pathway</h2>
+        <div class="card p-4 sm:p-6 lg:p-8 min-w-0 overflow-hidden">
+          <div class="flex items-start sm:items-center justify-between gap-3 mb-5 sm:mb-6">
+            <div class="min-w-0">
+              <p class="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-light-dim dark:text-paper-dim mb-1">REAL-TIME CONSOLIDATION</p>
+              <h2 class="text-lg sm:text-xl font-display font-bold text-light-ink dark:text-paper truncate">Your DSA Pathway</h2>
             </div>
-            <a href="./stats.html" class="text-xs font-mono text-dendrite hover:underline">View Analytics &rarr;</a>
+            <a href="./stats.html" class="text-xs font-mono text-dendrite hover:underline shrink-0 whitespace-nowrap pt-1 sm:pt-0">View Analytics &rarr;</a>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
-              <p id="stat-total" class="text-2xl sm:text-3xl font-display font-bold text-light-ink dark:text-paper">—</p>
-              <p class="text-xs text-light-muted dark:text-paper-muted mt-1 font-medium">Total Solved</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
+            <div class="p-2.5 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
+              <p id="stat-total" class="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-light-ink dark:text-paper leading-none">—</p>
+              <p class="text-[11px] sm:text-xs text-light-muted dark:text-paper-muted mt-1.5 font-medium truncate">Total Solved</p>
             </div>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
-              <p id="stat-mastered" class="text-2xl sm:text-3xl font-display font-bold text-mastered">—</p>
-              <p class="text-xs text-light-muted dark:text-paper-muted mt-1 font-medium">Mastered (D5)</p>
+            <div class="p-2.5 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
+              <p id="stat-mastered" class="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-mastered leading-none">—</p>
+              <p class="text-[11px] sm:text-xs text-light-muted dark:text-paper-muted mt-1.5 font-medium truncate">Mastered (D5)</p>
             </div>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
-              <p id="stat-due" class="text-2xl sm:text-3xl font-display font-bold text-spark">—</p>
-              <p class="text-xs text-light-muted dark:text-paper-muted mt-1 font-medium">Due Today</p>
+            <div class="p-2.5 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
+              <p id="stat-due" class="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-spark leading-none">—</p>
+              <p class="text-[11px] sm:text-xs text-light-muted dark:text-paper-muted mt-1.5 font-medium truncate">Due Today</p>
             </div>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
-              <p id="stat-streak" class="text-2xl sm:text-3xl font-display font-bold text-dendrite">—</p>
-              <p class="text-xs text-light-muted dark:text-paper-muted mt-1 font-medium">Day Streak</p>
+            <div class="p-2.5 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-ink-900/40 border border-light-border dark:border-ink-600/30">
+              <p id="stat-streak" class="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-dendrite leading-none">—</p>
+              <p class="text-[11px] sm:text-xs text-light-muted dark:text-paper-muted mt-1.5 font-medium truncate">Day Streak</p>
             </div>
           </div>
+
+          <!-- Progress Bar -->
+          <div class="h-2 sm:h-2.5 w-full rounded-full bg-slate-100 dark:bg-ink-700 overflow-hidden mb-1.5">
+            <div id="progress-bar-fill" class="h-full rounded-full bg-gradient-to-r from-dendrite to-spark transition-all duration-700" style="width: 0%"></div>
+          </div>
+          <p id="progress-bar-label" class="text-[11px] sm:text-xs text-light-dim dark:text-paper-dim font-mono mb-6">—</p>
+
+          <!-- 1-Year Consistency Board -->
+          <div class="pt-5 border-t border-light-border dark:border-ink-600/60">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div>
+                <p class="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-light-dim dark:text-paper-dim">1-YEAR REVISION CONSISTENCY</p>
+                <p id="consistency-summary" class="text-[10px] sm:text-[11px] text-light-muted dark:text-paper-muted mt-0.5">365-day neural consolidation heatmap</p>
+              </div>
+              <div class="flex items-center gap-1.5 text-[10px] font-mono text-light-dim dark:text-paper-dim">
+                <span>Less</span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-ink-700/80"></span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-spark/35"></span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-spark/70"></span>
+                <span class="h-2.5 w-2.5 rounded-sm bg-spark"></span>
+                <span>More</span>
+              </div>
+            </div>
+
+            <!-- Heatmap Board Container with smooth horizontal scroll and touch-pan -->
+            <div class="overflow-x-auto pb-2 -mx-1 px-1 touch-pan-x">
+              <div class="min-w-[680px] flex flex-col gap-1">
+                <!-- Month Labels Row -->
+                <div id="consistency-months" class="flex text-[10px] font-mono text-light-dim dark:text-paper-dim h-4 select-none"></div>
+                <!-- 52-Week Grid -->
+                <div id="consistency-graph" class="flex gap-[3px]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
           <!-- Progress Bar -->
           <div class="h-2.5 w-full rounded-full bg-slate-100 dark:bg-ink-700 overflow-hidden mb-1.5">
