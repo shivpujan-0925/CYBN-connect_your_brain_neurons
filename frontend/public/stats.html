@@ -159,14 +159,61 @@
 
     <!-- Weekly activity chart -->
     <div class="card p-6 sm:p-8 mb-8">
-      <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-5 border-b border-light-border dark:border-ink-600/60">
         <div>
-          <h2 class="font-display text-lg font-bold text-light-ink dark:text-paper">Weekly Problem Solves</h2>
-          <p class="text-xs text-light-muted dark:text-paper-muted">Activity recorded over the last 8 calendar weeks</p>
+          <div class="flex items-center gap-2">
+            <h2 class="font-display text-lg sm:text-xl font-bold text-light-ink dark:text-paper">Weekly Problem Solves</h2>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-dendrite/10 text-dendrite border border-dendrite/25">8-Week Trend</span>
+          </div>
+          <p class="text-xs text-light-muted dark:text-paper-muted mt-1">First-time solves and spaced repetition reviews per 7-day window</p>
         </div>
-        <span class="text-xs font-mono text-light-dim dark:text-paper-dim">Consistent volume over time</span>
+
+        <!-- 3 KPI metric blocks -->
+        <div class="flex items-center gap-4 sm:gap-6 self-start sm:self-auto">
+          <div>
+            <p class="text-[10px] font-mono uppercase tracking-wider text-light-dim dark:text-paper-dim">8-Wk Total</p>
+            <p id="weekly-total-solves" class="text-lg sm:text-xl font-display font-bold text-light-ink dark:text-paper">—</p>
+          </div>
+          <div class="h-7 w-px bg-light-border dark:bg-ink-600/60"></div>
+          <div>
+            <p class="text-[10px] font-mono uppercase tracking-wider text-light-dim dark:text-paper-dim">Weekly Avg</p>
+            <p id="weekly-avg-solves" class="text-lg sm:text-xl font-display font-bold text-dendrite">—</p>
+          </div>
+          <div class="h-7 w-px bg-light-border dark:bg-ink-600/60"></div>
+          <div>
+            <p class="text-[10px] font-mono uppercase tracking-wider text-light-dim dark:text-paper-dim">Best Week</p>
+            <p id="weekly-peak-solves" class="text-lg sm:text-xl font-display font-bold text-spark">—</p>
+          </div>
+        </div>
       </div>
-      <div id="weekly-chart" class="flex items-end gap-3 sm:gap-4 h-48 pt-6 border-b border-light-border dark:border-ink-600/50"></div>
+
+      <!-- Chart wrapper with Y-axis & gridlines -->
+      <div id="weekly-chart-wrapper" class="relative pt-2">
+        <div class="flex gap-3">
+          <!-- Y-axis scale labels -->
+          <div id="weekly-y-axis" class="flex flex-col justify-between items-end pb-8 text-[10px] font-mono text-light-dim dark:text-paper-dim select-none w-6 shrink-0 h-52">
+            <span>4</span>
+            <span>2</span>
+            <span>0</span>
+          </div>
+
+          <!-- Chart Area -->
+          <div class="flex-1 relative flex flex-col justify-between h-52">
+            <!-- Background Horizontal Gridlines -->
+            <div class="absolute inset-0 pb-8 flex flex-col justify-between pointer-events-none -z-0">
+              <div class="w-full border-b border-dashed border-light-border/70 dark:border-ink-600/40"></div>
+              <div class="w-full border-b border-dashed border-light-border/70 dark:border-ink-600/40"></div>
+              <div class="w-full border-b border-light-border dark:border-ink-600/60"></div>
+            </div>
+
+            <!-- Columns Container -->
+            <div id="weekly-columns" class="relative z-10 flex-1 grid grid-cols-8 gap-2 sm:gap-4 pb-8 items-end h-full"></div>
+
+            <!-- X-axis Date Labels Row -->
+            <div id="weekly-x-axis" class="grid grid-cols-8 gap-2 sm:gap-4 text-center select-none pt-1"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Difficulty Spread & Topic Distribution Grid -->
@@ -256,18 +303,83 @@
         document.getElementById('stat-active').textContent = totalProblems;
       }
 
-      // --- Weekly activity bar chart ---
-      const weeklyChart = document.getElementById('weekly-chart');
-      const maxWeekly = Math.max(1, ...stats.weeklyActivity.map((w) => w.count));
-      weeklyChart.innerHTML = stats.weeklyActivity.map((w) => {
-        const heightPct = Math.max(6, Math.round((w.count / maxWeekly) * 100));
-        return `
-          <div class="flex-1 flex flex-col items-center justify-end h-full gap-2 group relative">
-            <span class="text-xs font-mono font-medium text-light-muted dark:text-paper-muted">${w.count || ''}</span>
-            <div class="w-full rounded-t-lg bg-gradient-to-t from-dendrite to-spark transition-all duration-500 group-hover:brightness-110 shadow-sm" style="height: ${heightPct}%"></div>
-            <span class="text-[10px] font-mono text-light-dim dark:text-paper-dim truncate w-full text-center">${escapeHtml(w.label)}</span>
-          </div>`;
-      }).join('');
+      // --- Weekly activity visual chart ---
+      const weeks = stats.weeklyActivity || [];
+      const totalSolves = weeks.reduce((sum, w) => sum + (w.count || 0), 0);
+      const maxWeekly = Math.max(0, ...weeks.map((w) => w.count || 0));
+      const avgWeekly = weeks.length ? (totalSolves / weeks.length).toFixed(1) : '0';
+
+      const elTotal = document.getElementById('weekly-total-solves');
+      const elAvg = document.getElementById('weekly-avg-solves');
+      const elPeak = document.getElementById('weekly-peak-solves');
+      if (elTotal) elTotal.innerHTML = `${totalSolves} <span class="text-xs font-normal text-light-muted dark:text-paper-muted">solves</span>`;
+      if (elAvg) elAvg.innerHTML = `${avgWeekly} <span class="text-xs font-normal text-light-muted dark:text-paper-muted">/wk</span>`;
+      if (elPeak) elPeak.innerHTML = `${maxWeekly} <span class="text-xs font-normal text-light-muted dark:text-paper-muted">max</span>`;
+
+      // Scale calculations: dynamic ceiling so bars have breathing room
+      const yMax = maxWeekly === 0 ? 4 : Math.max(4, Math.ceil(maxWeekly * 1.25));
+      const yMid = Math.round(yMax / 2);
+
+      const yAxisEl = document.getElementById('weekly-y-axis');
+      if (yAxisEl) {
+        yAxisEl.innerHTML = `
+          <span>${yMax}</span>
+          <span>${yMid}</span>
+          <span>0</span>
+        `;
+      }
+
+      const columnsContainer = document.getElementById('weekly-columns');
+      const xAxisContainer = document.getElementById('weekly-x-axis');
+
+      if (columnsContainer) {
+        columnsContainer.innerHTML = weeks.map((w, index) => {
+          const count = w.count || 0;
+          const pct = count > 0 ? Math.max(8, Math.min(100, Math.round((count / yMax) * 100))) : 0;
+          const weekRange = w.weekRange || w.label;
+
+          return `
+            <div class="group relative flex flex-col items-center justify-end h-full cursor-pointer">
+              <!-- Floating Hover Tooltip -->
+              <div class="absolute -top-12 z-30 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-y-1 group-hover:translate-y-0 whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-slate-900/95 dark:bg-ink-950/95 border border-light-border dark:border-ink-600 shadow-xl text-center">
+                <p class="text-[10px] font-mono text-paper-dim">${escapeHtml(weekRange)}</p>
+                <p class="text-xs font-bold text-paper">${count} ${count === 1 ? 'solve' : 'solves'}</p>
+              </div>
+
+              <!-- Column Hover Highlight Track -->
+              <div class="absolute inset-x-0 bottom-0 top-0 rounded-xl bg-slate-100/50 dark:bg-ink-800/30 opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
+
+              <!-- Top Value Number Tag -->
+              ${count > 0 
+                ? `<span class="text-[11px] font-mono font-bold text-spark mb-1.5 transition-transform group-hover:scale-110">${count}</span>` 
+                : `<span class="text-[10px] font-mono text-light-dim/30 dark:text-paper-dim/30 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity">0</span>`
+              }
+
+              <!-- Bar or Zero-State Baseline Dash -->
+              ${count > 0 ? `
+                <div class="w-full max-w-[42px] rounded-t-xl bg-gradient-to-t from-dendrite via-indigo-500 to-spark transition-all duration-500 group-hover:brightness-125 shadow-glow-dendrite/30 group-hover:shadow-glow/50"
+                     style="height: ${pct}%"></div>
+              ` : `
+                <div class="h-1.5 w-6 sm:w-8 rounded-full bg-slate-200 dark:bg-ink-700/60 group-hover:bg-dendrite/40 transition-colors"></div>
+              `}
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (xAxisContainer) {
+        xAxisContainer.innerHTML = weeks.map((w, index) => {
+          const isCurrent = index === weeks.length - 1;
+          return `
+            <div class="flex flex-col items-center">
+              <span class="text-[10px] sm:text-[11px] font-mono ${isCurrent ? 'font-bold text-spark' : 'text-light-dim dark:text-paper-dim'}">
+                ${escapeHtml(w.label)}
+              </span>
+              ${isCurrent ? '<span class="text-[9px] font-mono text-spark/90 font-medium">Now</span>' : ''}
+            </div>
+          `;
+        }).join('');
+      }
 
       // --- Difficulty breakdown ---
       const diffColors = { 

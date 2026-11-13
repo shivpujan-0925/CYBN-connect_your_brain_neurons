@@ -77,7 +77,7 @@ function computeDifficultyBreakdown(problems) {
   return counts;
 }
 
-/** Problems logged per week, last 8 rolling 7-day windows ending today. */
+/** Problems solved or revised per week, last 8 rolling 7-day windows ending today. */
 function computeWeeklyActivity(problems, referenceDate = new Date()) {
   const end = new Date(referenceDate);
   end.setUTCHours(23, 59, 59, 999);
@@ -93,14 +93,19 @@ function computeWeeklyActivity(problems, referenceDate = new Date()) {
   }
 
   for (const p of problems) {
-    if (!p.day0_completed_at) continue;
-    const solvedAt = p.day0_completed_at instanceof Date ? p.day0_completed_at : new Date(p.day0_completed_at);
-    const week = weeks.find((w) => solvedAt >= w.start && solvedAt <= w.end);
-    if (week) week.count++;
+    for (let stage = 0; stage <= 5; stage++) {
+      const ts = stage === 0 ? p.day0_completed_at : p[`day${stage}_completed_at`];
+      if (!ts) continue;
+      const d = ts instanceof Date ? ts : new Date(ts);
+      const week = weeks.find((w) => d >= w.start && d <= w.end);
+      if (week) week.count++;
+    }
   }
 
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return weeks.map((w) => ({
     label: `${w.start.getUTCMonth() + 1}/${w.start.getUTCDate()}`,
+    weekRange: `${monthNames[w.start.getUTCMonth()]} ${w.start.getUTCDate()} – ${monthNames[w.end.getUTCMonth()]} ${w.end.getUTCDate()}`,
     count: w.count,
   }));
 }
