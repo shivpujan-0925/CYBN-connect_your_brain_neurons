@@ -361,17 +361,25 @@
     }
   });
 
-  // Attach to search input on dashboard if present
+  // Attach to search input & mobile search trigger on navbar
   document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
-      searchInput.setAttribute('placeholder', 'Search or press Ctrl+K…');
+      searchInput.setAttribute('placeholder', 'Search problems, topics… (Ctrl+K)');
       searchInput.addEventListener('focus', (e) => {
         e.preventDefault();
         searchInput.blur();
         openPalette();
       });
       searchInput.addEventListener('click', (e) => {
+        e.preventDefault();
+        openPalette();
+      });
+    }
+
+    const mobileSearchBtn = document.getElementById('mobile-search-btn');
+    if (mobileSearchBtn) {
+      mobileSearchBtn.addEventListener('click', (e) => {
         e.preventDefault();
         openPalette();
       });

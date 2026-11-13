@@ -26,12 +26,13 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- Floating Pill Navbar with Mobile Menu -->
-  <header class="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 w-full max-w-5xl mx-auto">
+  <header class="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto">
     <nav class="pill-navbar backdrop-blur-xl relative">
-      <div class="flex items-center gap-3">
-        <a href="./dashboard.html" class="flex items-center gap-2.5 shrink-0">
-          <div class="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-slate-900 to-slate-950 dark:from-ink-800 dark:to-ink-950 border border-spark/40 shadow-sm">
-            <svg class="h-5 w-5" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left: Brand Logo & Desktop Nav Links -->
+      <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+        <a href="./dashboard.html" class="flex items-center gap-2.5 shrink-0 group">
+          <div class="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-b from-slate-900 to-slate-950 dark:from-ink-800 dark:to-ink-950 border border-spark/40 shadow-sm group-hover:border-spark transition-colors">
+            <svg class="h-4.5 w-4.5" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M 28 11 A 13 13 0 1 0 28 29" stroke="#6366F1" stroke-width="3.2" stroke-linecap="round" />
               <path d="M 28 11 L 20 20" stroke="#F59E0B" stroke-width="2.6" stroke-linecap="round" />
               <circle cx="28" cy="29" r="3" fill="#6366F1" />
@@ -40,14 +41,42 @@
               <circle cx="28" cy="11" r="2.8" fill="#FBBF24" />
             </svg>
           </div>
-          <span class="font-display font-bold text-base tracking-tight text-light-ink dark:text-paper hidden sm:inline">CY<span class="text-spark">B</span>N</span>
+          <span class="font-display font-bold text-base tracking-tight text-light-ink dark:text-paper">CY<span class="text-spark">B</span>N</span>
         </a>
+
+        <!-- Subtle Vertical Divider -->
+        <div class="hidden lg:block h-4 w-px bg-light-border dark:bg-ink-600/60"></div>
+
+        <!-- Primary Desktop Nav Links -->
+        <div class="hidden lg:flex items-center gap-1">
+          <a href="./dashboard.html" class="nav-pill-link text-xs">Dashboard</a>
+          <a href="./problems.html" class="nav-pill-link text-xs">All Problems</a>
+          <a href="./stats.html" class="nav-pill-link-active text-xs">Stats</a>
+        </div>
       </div>
 
-      <div class="flex items-center gap-2 sm:gap-4">
-        <a href="./dashboard.html" class="nav-pill-link text-xs sm:text-sm hidden sm:inline-block">&larr; Dashboard</a>
-        <a href="./problems.html" class="nav-pill-link text-xs sm:text-sm hidden sm:inline-block">All Problems</a>
-        <a href="./stats.html" class="nav-pill-link-active text-xs sm:text-sm hidden sm:inline-block">Stats</a>
+      <!-- Center: Quick Search / Command Palette Bar -->
+      <div class="hidden md:flex flex-1 max-w-sm lg:max-w-md mx-2 lg:mx-4">
+        <div class="relative w-full">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-light-dim dark:text-paper-dim pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input id="search-input" type="text" placeholder="Search problems, topics… (Ctrl+K)" class="w-full h-9 bg-slate-100/90 dark:bg-ink-900/80 hover:bg-slate-200/70 dark:hover:bg-ink-900 border border-light-border dark:border-ink-600/50 hover:border-spark/40 dark:hover:border-spark/40 rounded-full pl-9 pr-16 text-xs text-light-ink dark:text-paper placeholder:text-light-dim dark:placeholder:text-paper-dim focus:outline-none focus:ring-1 focus:ring-spark transition-all cursor-pointer shadow-inner" />
+          <kbd class="hidden sm:inline-flex items-center absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono px-1.5 py-0.5 rounded bg-white dark:bg-ink-800 text-light-muted dark:text-paper-dim border border-light-border dark:border-ink-600/60 shadow-sm pointer-events-none">Ctrl+K</kbd>
+        </div>
+      </div>
+
+      <!-- Right: Action & Theme Toggle -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <a href="./add-problem.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-medium border border-spark/35 hover:border-spark bg-spark/5 hover:bg-spark/15 dark:bg-spark/10 text-spark-dim dark:text-spark transition-all">
+          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          <span>Add Problem</span>
+        </a>
+
+        <!-- Mobile search button (under md) -->
+        <button type="button" id="mobile-search-btn" class="md:hidden h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 text-light-dim dark:text-paper-dim transition-colors" title="Search">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
 
         <!-- Theme Toggle -->
         <button type="button" class="js-theme-toggle h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" title="Toggle theme">
@@ -55,7 +84,7 @@
         </button>
 
         <!-- Mobile Menu Toggle -->
-        <button type="button" id="mobile-menu-btn" class="sm:hidden h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" aria-label="Toggle navigation">
+        <button type="button" id="mobile-menu-btn" class="lg:hidden h-8 w-8 rounded-full flex items-center justify-center border border-light-border dark:border-ink-600/70 hover:bg-slate-100 dark:hover:bg-ink-800 transition-colors" aria-label="Toggle navigation">
           <svg id="menu-icon-open" class="h-4 w-4 text-light-ink dark:text-paper" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
@@ -66,18 +95,18 @@
       </div>
 
       <!-- Mobile Dropdown Navigation Panel -->
-      <div id="mobile-menu" class="hidden sm:hidden absolute top-full left-0 right-0 mt-2 p-4 card backdrop-blur-2xl shadow-xl z-50 animate-fade-up">
-        <div class="flex flex-col gap-2">
-          <a href="./dashboard.html" class="px-4 py-2 rounded-xl text-sm text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">&larr; Dashboard</a>
-          <a href="./problems.html" class="px-4 py-2 rounded-xl text-sm text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">All Problems</a>
-          <a href="./stats.html" class="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 dark:bg-ink-800 text-light-ink dark:text-paper">Stats &amp; Analytics</a>
-          <a href="./add-problem.html" class="px-4 py-2 rounded-xl text-sm text-spark font-semibold hover:bg-slate-50 dark:hover:bg-ink-800">+ Add Problem</a>
+      <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 right-0 mt-2 p-3.5 card backdrop-blur-2xl shadow-xl z-50 animate-fade-up">
+        <div class="flex flex-col gap-1.5">
+          <a href="./dashboard.html" class="px-3.5 py-2 rounded-xl text-xs text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">Dashboard</a>
+          <a href="./problems.html" class="px-3.5 py-2 rounded-xl text-xs text-light-muted dark:text-paper-muted hover:bg-slate-50 dark:hover:bg-ink-800">All Problems</a>
+          <a href="./stats.html" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-ink-800 text-light-ink dark:text-paper">Stats &amp; Analytics</a>
+          <a href="./add-problem.html" class="px-3.5 py-2 rounded-xl text-xs text-spark font-semibold hover:bg-slate-50 dark:hover:bg-ink-800">+ Add Problem</a>
         </div>
       </div>
     </nav>
   </header>
 
-  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10" id="page-root">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10" id="page-root">
     <div class="flex items-center justify-between gap-4 mb-8 flex-wrap">
       <div>
         <div class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-light-dim dark:text-paper-dim mb-1">
@@ -164,7 +193,7 @@
 
   <!-- Modern Minimal Footer -->
   <footer class="border-t border-light-border dark:border-ink-600/60 mt-auto bg-white/50 dark:bg-ink-950/50 backdrop-blur-md">
-    <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
       <p class="text-xs text-light-dim dark:text-paper-dim font-mono">-- Built for Engineers, by the engineer.</p>
       <div class="flex items-center gap-4 text-xs text-light-muted dark:text-paper-dim font-mono">
         <a href="./dashboard.html" class="hover:text-light-ink dark:hover:text-paper">Dashboard</a>
