@@ -108,32 +108,35 @@
 
     <div id="main-content">
       <!-- Profile & Pathway Row -->
-      <div class="grid lg:grid-cols-[300px_1fr] gap-6 mb-8">
+      <div class="grid lg:grid-cols-[280px_1fr] xl:grid-cols-[300px_1fr] gap-6 mb-8 items-start">
         <!-- User Profile Card -->
-        <div class="card p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-4">
-              <div class="relative shrink-0">
-                <img id="avatar-img" src="" alt="Profile" class="h-16 w-16 rounded-2xl object-cover border-2 border-light-border dark:border-ink-600 shadow-sm" />
-                <button id="avatar-edit-btn" title="Change photo" class="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-spark text-ink-950 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
-                  <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 112.828 2.828L11.828 13.828 8 15l1.172-3.828z"/></svg>
-                </button>
-                <button id="avatar-remove-btn" title="Remove photo (reset to default)" class="hidden absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-ink-800 hover:bg-overdue text-paper-muted hover:text-white border border-light-border dark:border-ink-600 flex items-center justify-center shadow-md hover:scale-110 transition-all" aria-label="Remove profile photo">
-                  <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                <input id="avatar-input" type="file" accept="image/*" class="hidden" />
-              </div>
-              <div class="min-w-0">
-                <p id="profile-username" class="font-display font-bold text-lg truncate text-light-ink dark:text-paper leading-tight">—</p>
-                <span class="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-mastered/10 text-mastered border border-mastered/20">Active Learner</span>
+        <div class="card p-4 sm:p-5 self-start">
+          <div class="flex items-center gap-3.5">
+            <div class="relative shrink-0">
+              <img id="avatar-img" src="" alt="Profile" class="h-12 w-12 rounded-xl object-cover border border-light-border dark:border-ink-600 shadow-sm" />
+              <button id="avatar-edit-btn" title="Change photo" class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-spark text-ink-950 flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
+                <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 112.828 2.828L11.828 13.828 8 15l1.172-3.828z"/></svg>
+              </button>
+              <button id="avatar-remove-btn" title="Remove photo (reset to default)" class="hidden absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-ink-800 hover:bg-overdue text-paper-muted hover:text-white border border-light-border dark:border-ink-600 flex items-center justify-center shadow-sm hover:scale-110 transition-all" aria-label="Remove profile photo">
+                <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+              <input id="avatar-input" type="file" accept="image/*" class="hidden" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p id="profile-username" class="font-display font-bold text-base truncate text-light-ink dark:text-paper leading-tight">—</p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-mastered/10 text-mastered border border-mastered/20">
+                  <span class="h-1.5 w-1.5 rounded-full bg-mastered"></span>
+                  Active Learner
+                </span>
               </div>
             </div>
           </div>
 
-          <div class="mt-6 pt-6 border-t border-light-border dark:border-ink-600/60">
-            <a href="./add-problem.html" class="btn-primary w-full py-2.5 rounded-xl shadow-glow">
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-              Log Solved Problem
+          <div class="mt-3.5 pt-3 border-t border-light-border dark:border-ink-600/60">
+            <a href="./add-problem.html" class="group flex items-center justify-center gap-1.5 w-full py-2 px-3 text-xs font-mono font-medium rounded-lg border border-spark/35 hover:border-spark bg-spark/5 hover:bg-spark/15 dark:bg-spark/10 dark:hover:bg-spark/20 text-spark-dim dark:text-spark transition-all duration-150">
+              <svg class="h-3.5 w-3.5 transition-transform duration-150 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span>Add Solved Problem</span>
             </a>
           </div>
         </div>
