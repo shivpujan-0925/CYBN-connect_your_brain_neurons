@@ -3,28 +3,63 @@
   if (!user) return;
 
   document.getElementById('profile-username').textContent = user.username;
-  document.getElementById('profile-id').textContent = `ID: ${user.id}`;
-  document.getElementById('avatar-img').src = user.avatar_url || DEFAULT_AVATAR;
 
   document.getElementById('logout-btn').addEventListener('click', async () => {
     await api.auth.logout();
     window.location.href = './login.html';
   });
 
-  // --- Avatar upload ---
+  // --- Avatar management (upload, display, and remove) ---
+  const avatarImg = document.getElementById('avatar-img');
+  const avatarEditBtn = document.getElementById('avatar-edit-btn');
+  const avatarRemoveBtn = document.getElementById('avatar-remove-btn');
   const avatarInput = document.getElementById('avatar-input');
-  document.getElementById('avatar-edit-btn').addEventListener('click', () => avatarInput.click());
+
+  function setAvatar(url) {
+    avatarImg.src = url || DEFAULT_AVATAR;
+    if (url) {
+      avatarRemoveBtn.classList.remove('hidden');
+      avatarRemoveBtn.classList.add('flex');
+    } else {
+      avatarRemoveBtn.classList.add('hidden');
+      avatarRemoveBtn.classList.remove('flex');
+    }
+  }
+
+  setAvatar(user.avatar_url);
+
+  avatarEditBtn.addEventListener('click', () => avatarInput.click());
+
   avatarInput.addEventListener('change', async () => {
     const file = avatarInput.files[0];
     if (!file) return;
     try {
       const { avatar_url } = await api.users.uploadAvatar(file);
-      document.getElementById('avatar-img').src = avatar_url;
+      setAvatar(avatar_url);
       toast('Profile photo updated.', 'success');
     } catch (err) {
       toast(err.message, 'error');
     }
     avatarInput.value = '';
+  });
+
+  avatarRemoveBtn.addEventListener('click', async () => {
+    const confirmed = await showConfirmModal({
+      title: 'Remove Profile Picture',
+      message: 'Reset your profile photo back to the default CYBN neural avatar?',
+      confirmText: 'Remove Photo',
+      cancelText: 'Cancel',
+      danger: true,
+    });
+    if (!confirmed) return;
+
+    try {
+      await api.users.removeAvatar();
+      setAvatar(null);
+      toast('Profile photo removed. Default avatar restored.', 'default');
+    } catch (err) {
+      toast(err.message, 'error');
+    }
   });
 
   // --- Overview stats + consistency graph ---

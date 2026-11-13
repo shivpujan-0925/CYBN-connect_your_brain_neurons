@@ -118,12 +118,14 @@
                 <button id="avatar-edit-btn" title="Change photo" class="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-spark text-ink-950 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
                   <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 112.828 2.828L11.828 13.828 8 15l1.172-3.828z"/></svg>
                 </button>
+                <button id="avatar-remove-btn" title="Remove photo (reset to default)" class="hidden absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-ink-800 hover:bg-overdue text-paper-muted hover:text-white border border-light-border dark:border-ink-600 flex items-center justify-center shadow-md hover:scale-110 transition-all" aria-label="Remove profile photo">
+                  <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
                 <input id="avatar-input" type="file" accept="image/*" class="hidden" />
               </div>
               <div class="min-w-0">
-                <p id="profile-username" class="font-display font-bold text-lg truncate text-light-ink dark:text-paper">—</p>
-                <p id="profile-id" class="text-xs text-light-dim dark:text-paper-dim font-mono truncate">—</p>
-                <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-mono bg-mastered/10 text-mastered border border-mastered/20">Active Learner</span>
+                <p id="profile-username" class="font-display font-bold text-lg truncate text-light-ink dark:text-paper leading-tight">—</p>
+                <span class="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-mastered/10 text-mastered border border-mastered/20">Active Learner</span>
               </div>
             </div>
           </div>

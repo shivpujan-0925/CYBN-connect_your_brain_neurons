@@ -105,9 +105,22 @@ const DEFAULT_AVATAR =
   'data:image/svg+xml;utf8,' +
   encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-      <rect width="100" height="100" rx="50" fill="#1D2240"/>
-      <circle cx="50" cy="38" r="18" fill="#6E7392"/>
-      <path d="M18 88c0-20 14-32 32-32s32 12 32 32" fill="#6E7392"/>
+      <defs>
+        <linearGradient id="cybn-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#141936"/>
+          <stop offset="100%" stop-color="#0a0d1d"/>
+        </linearGradient>
+        <linearGradient id="cybn-user" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#818CF8"/>
+          <stop offset="100%" stop-color="#4F46E5"/>
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" rx="24" fill="url(#cybn-bg)"/>
+      <rect x="2" y="2" width="96" height="96" rx="22" fill="none" stroke="#2B3563" stroke-width="2"/>
+      <circle cx="68" cy="26" r="4.5" fill="#F59E0B"/>
+      <path d="M58 33 L68 26" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="50" cy="40" r="17" fill="url(#cybn-user)"/>
+      <path d="M22 84 C22 69 35 62 50 62 C65 62 78 69 78 84" fill="url(#cybn-user)"/>
     </svg>
   `);
 
